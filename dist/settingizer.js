@@ -16,6 +16,7 @@ window.create_settings = function (data, model) {
 	var traverses = 0;
 	var labels = '';
 	var descriptions = {};
+	var keys = [];
 	document.body.innerHTML += '<form class="settings-creator"></form>';
 	var el = document.getElementsByClassName('settings-creator')[0];
 	traverse(); // create all elements
@@ -113,7 +114,7 @@ window.create_settings = function (data, model) {
 			var name = '';
 			for (var i = 0; i < index.length; i += 1) {
 				if (i === 0) name += index[i];
-				else name += '[' + (isNaN(index[i]) ? index[i] : '') + ']';
+				else name += '[' + index[i] + ']';
 			}
 
 			var prop = index[index.length - 1];
