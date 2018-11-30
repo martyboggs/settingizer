@@ -17,6 +17,7 @@ window.create_settings = function (data, model) {
 	var labels = '';
 	var descriptions = {};
 	var keys = [];
+
 	document.body.innerHTML += '<form class="settings-creator"></form>';
 	var el = document.getElementsByClassName('settings-creator')[0];
 	traverse(); // create all elements
@@ -41,6 +42,11 @@ window.create_settings = function (data, model) {
 		// console.log(traverses);
 		// console.log('value:', value, 'parent: ', parent, index);
 
+		// check for empty objects and arrays here
+		if ((Array.isArray(value) && value.length === 0) || (typeof value === 'object' && Object.keys(value).length === 0)) {
+			return nextProp();
+		}
+
 		if (buildModel) {
 			checkModel();
 			questions();
@@ -49,33 +55,25 @@ window.create_settings = function (data, model) {
 
 		if (Array.isArray(value)) {
 			// console.log('array');
-			if (value.length > 0) {
-				index.push(0);
-				parent = value;
-				value = parent[0];
-				if (index[index.length - 2] !== undefined) {
-					labels += isNaN(index[index.length - 2]) ? '<label class="fieldset">' + capitalize(index[index.length - 2]) + '</label>' : '';
-				}
-				labels += '<div class="array-group">';
-			} else {
-				nextProp();
+			index.push(0);
+			parent = value;
+			value = parent[0];
+			if (index[index.length - 2] !== undefined) {
+				labels += isNaN(index[index.length - 2]) ? '<label class="fieldset">' + capitalize(index[index.length - 2]) + '</label>' : '';
 			}
+			labels += '<div class="array-group">';
 			traverse();
 
 		} else if (typeof value === 'object' && value) { // typof null === 'object' :P
 			// console.log('object');
 			var keys = Object.keys(value);
-			if (keys.length > 0) {
-				index.push(keys[0]);
-				parent = value;
-				value = value[index[index.length - 1]];
-				if (index[index.length - 2] !== undefined) {
-					labels += isNaN(index[index.length - 2]) ? '<label class="fieldset">' + capitalize(index[index.length - 2]) + '</label>' : '';
-				}
-				labels += '<div class="object-group">';
-			} else {
-				nextProp();
+			index.push(keys[0]);
+			parent = value;
+			value = value[index[index.length - 1]];
+			if (index[index.length - 2] !== undefined) {
+				labels += isNaN(index[index.length - 2]) ? '<label class="fieldset">' + capitalize(index[index.length - 2]) + '</label>' : '';
 			}
+			labels += '<div class="object-group">';
 			traverse();
 
 		} else if (typeof value === 'function') {
