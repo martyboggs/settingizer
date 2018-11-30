@@ -106,7 +106,7 @@ window.create_settings = function (data, model) {
 				if (value[0] !== '#') value = '#' + value;
 			}
 			else if (value && !isNaN(Number(value))) type = 'number';
-			else if (value === 'on' || value === 'off') type = 'checkbox';
+			else if (value === 'on' || value === 'off' || typeof value === 'boolean') type = 'checkbox';
 			else if (value && value.length > 134) type = 'textarea';
 
 			var name = '';
@@ -128,7 +128,7 @@ window.create_settings = function (data, model) {
 
 			html('<div class="fieldset"><label for="' + id + '">' + capitalize(prop) + '</label>');
 				if (type !== 'textarea') {
-					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + value + '"' + (value === 'on' ? ' checked' : '') + ' />' + description + '</div>');
+					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + value + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
 				} else {
 					html('<div><textarea rows="5" id="' +  id + '" name="' +  name + '"' + (value === 'on' ? ' checked' : '') + '>' + value + '</textarea></div>');
 				}
