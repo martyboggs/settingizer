@@ -234,7 +234,7 @@ window.create_settings = function (data, model) {
 	}
 
 	function capitalize(string) {
-		// add space if words go from lowercase to uppercase
+		// todo: add space if words go from lowercase to uppercase
 		if (typeof string !== 'string') return string;
 		var matches = string.match(/([^\s-_]+)/g);
 		matches = matches.map(function (w) { return w[0].toUpperCase() + w.slice(1).toLowerCase(); });
@@ -253,29 +253,27 @@ window.create_settings = function (data, model) {
 
 	function initEvents() {
 		document.querySelector('.settings-creator').addEventListener('click', function (e) {
+			// delegate
 			if (e.target.matches('.add-item')) {
-				try {
-					var item = e.target.parentNode.previousSibling.cloneNode(true);
-					e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
+				// todo: increment index
+				var item = e.target.parentNode.previousSibling.cloneNode(true);
+				e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
 
-					var fieldsets = item.querySelectorAll('div.fieldset');
-					if (item.matches('div.fieldset')) fieldsets = [item];
-					var label, input, prop, dupes;
-					for (var i = 0; i < fieldsets.length; i += 1) {
-						label = fieldsets[i].querySelector('label');
-						input = fieldsets[i].querySelector('input');
+				var fieldsets = item.querySelectorAll('div.fieldset');
+				if (item.matches('div.fieldset')) fieldsets = [item];
+				var label, input, prop, dupes;
+				for (var i = 0; i < fieldsets.length; i += 1) {
+					label = fieldsets[i].querySelector('label');
+					input = fieldsets[i].querySelector('input');
 
-						prop = input.dataset.key;
-						id = isNaN(prop) ? prop.toLowerCase() : 'a' + prop;
-						dupes = getAllIndexes(ids, id);
-						ids.push(id);
-						if (dupes > 0) { id += dupes; }
+					prop = input.dataset.key;
+					id = isNaN(prop) ? prop.toLowerCase() : 'a' + prop;
+					dupes = getAllIndexes(ids, id);
+					ids.push(id);
+					if (dupes > 0) { id += dupes; }
 
-						input.id = id;
-						label.htmlFor = id;
-					}
-				} catch (err) {
-					console.log(err);
+					input.id = id;
+					label.htmlFor = id;
 				}
 			}
 		});

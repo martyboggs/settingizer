@@ -231,11 +231,74 @@ var product = {"product":{"id":10954089415,"title":"Adjustable Leisure Beanbag C
 
 var bcpo_data = {"productCollections":[{"id":445221511,"handle":"frontpage","title":"Frontpage","updated_at":"2018-11-24T10:53:42-12:00","body_html":"","published_at":"2017-07-29T17:07:42-12:00","sort_order":"manual","template_suffix":"","disjunctive":false,"rules":[{"column":"type","relation":"not_equals","condition":"bcpo_hidden_products"},{"column":"type","relation":"not_equals","condition":"sdf"}],"published_scope":"global"},{"id":79991701552,"handle":"all","title":"Products","updated_at":"2018-11-24T10:50:52-12:00","body_html":"","published_at":"2018-10-24T16:38:27-12:00","sort_order":"alpha-asc","template_suffix":"","disjunctive":false,"rules":[{"column":"type","relation":"not_equals","condition":"bcpo_hidden_products"},{"column":"variant_compare_at_price","relation":"not_equals","condition":"123"}],"published_scope":"web"},{"id":1415053319,"handle":"sdf","title":"sdf","updated_at":"2018-11-24T10:51:22-12:00","body_html":"","published_at":"2017-12-16T10:28:30-12:00","sort_order":"best-selling","template_suffix":"","disjunctive":false,"rules":[{"column":"type","relation":"not_equals","condition":"bcpo_hidden_products"},{"column":"type","relation":"not_equals","condition":"sdf"}],"published_scope":"global"}],"charts":[{"id":"d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb","products":[],"collections":[{"id":445221511,"title":"Frontpage"},{"id":79991701552,"title":"Products"}],"chart":{"title":"balls","descriptionTop":"<p>.,m.,mmm,</p>\n<p>&nbsp;</p>\n<p>,m.,m<img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb-AUSTINACTIVE_FINAL_-02copy.png?15795550668089307553\" alt=\"\" width=\"3001\" height=\"664\" /></p>","descriptionBottom":"<p><img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb-appstore.png?12598548905562463663\" alt=\"\" width=\"300\" height=\"100\" /></p>","values":[["",""],["","sdfsdf"]],"buttonPlacement":"above-atc"}},{"id":"06ad447f-8639-47cb-b24c-7d1cebc7668b","products":[],"collections":[],"chart":{"title":"","descriptionTop":"<p><img style=\"float: right;\" src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-06ad447f-8639-47cb-b24c-7d1cebc7668b-appstore.png?8574385599155832589\" alt=\"\" width=\"300\" height=\"100\" /></p>","descriptionBottom":"","values":[["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""]],"buttonPlacement":"above-atc"}},{"id":"e47eeaca-5501-4401-9b4f-c9a5903c6dda","products":[],"collections":[],"chart":{"title":"","descriptionTop":"<p><img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-e47eeaca-5501-4401-9b4f-c9a5903c6dda-BCP_multipleselection.png?5405499835884832029\" alt=\"\" width=\"1653\" height=\"930\" /></p>","descriptionBottom":"","values":[["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""]],"buttonPlacement":"above-atc"}}],"shadow":{"0":{},"length":1},"modal":{"0":{},"length":1}};
 
+var bcpo_settings = {
+  "fallback": "default",
+  "auto_select": "on",
+  "border_style": "square",
+  "tooltips": "show",
+  "sold_out_style": "transparent",
+  "jumbo_colors": "on",
+  "jumbo_images": "on",
+  "circle_swatches": "on",
+  "storewide_preorders": "off",
+  "money_format": "$",
+  "global_auto_image_options": "",
+  "global_color_options": "Color",
+  "global_colors": [
+    {
+      "key": "Green",
+      "value": "12625e"
+    },
+    {
+      "key": "Purple",
+      "value": "351b8e"
+    },
+    {
+      "key": "Blue",
+      "value": "2226b2"
+    },
+    {
+      "key": "Maroon",
+      "value": "ac216e"
+    },
+    {
+      "key": "Blue2",
+      "value": "174b79"
+    },
+    {
+      "key": "S",
+      "value": "dda62a"
+    },
+    {
+      "key": "M",
+      "value": "ec2ff8"
+    },
+    {
+      "key": "lkj",
+      "value": "c33725"
+    },
+    {
+      "key": "China",
+      "value": "4c2deb"
+    },
+    {
+      "key": "Australia",
+      "value": "dc2ad6"
+    },
+    {
+      "key": "United States",
+      "value": "3af02e"
+    }
+  ],
+  "rules": [],
+  "inventory_style": "amazon"
+};
+
 // var bcpo_data = ['hey', 'hey', {nowwhat: 5, ok: ['heu']}];
 // var bcpo_data = {ok: {ok2: {ok3: {ok4: 5}}}};
 // var bcpo_data = {cows: ['hey', 'hey', 'hey'], chickens: 'WHOA!'};
 
-	create_settings(bcpo_data);
+	create_settings(bcpo_settings);
 	</script>
 </body>
 </html>
