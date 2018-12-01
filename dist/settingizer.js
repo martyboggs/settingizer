@@ -50,7 +50,7 @@ window.create_settings = function (data, model) {
 
 		checkModel();
 		if (buildModel) {
-			// questions();
+			questions();
 		}
 		checkModel(); // if questions can checkModel too, this can be removed
 
@@ -61,7 +61,7 @@ window.create_settings = function (data, model) {
 			}
 			// if array has as many arrays of the same length
 			if (!gridCheck) {
-				if (value.reduce(function (a, v) { return a && Array.isArray(v) && v.length === value.length; }, true)) {
+				if (modelActive.sc_grid) {
 					gridCheck = value.length;
 					labels += '<div class="grid array-group">';
 				} else {
@@ -91,13 +91,15 @@ window.create_settings = function (data, model) {
 
 		} else if (value === undefined) {
 			// console.log('none');
-			if (Array.isArray(parent) && modelActive.sc_add) {
+			if (Array.isArray(parent) && modelActive.sc_add && gridCheck === 0) {
 				html('<div style="max-width: 100%; flex: 0 0 100%; border-color: transparent;"><button class="add-item" type="button">Add item</button></div>');
 			}
 			html('</div>');
 
 			if (gridCheck === 1) {
+				html('<div class="grid-buttons"><button class="add-x" type="button">Add X</button><button class="add-y" type="button">Add Y</button></div>');
 				html('</div>');
+				index.pop();
 			}
 			if (gridCheck > 0) gridCheck--;
 
@@ -185,13 +187,14 @@ window.create_settings = function (data, model) {
 	}
 
 	function html(str, force) {
-		if (!force && ('sc_show' in modelActive) && modelActive.sc_show === false) return;
+		if (!force && modelActive.sc_show === false) return;
 		htmlStr += str;
 		el.innerHTML = htmlStr;
 	}
 
 	function questions() {
 		var show;
+		var grid;
 		var description;
 		// console.log('question', index);
 		if (!('sc_show' in modelActive) && (index[index.length - 1] !== undefined || (index[index.length - 1] === undefined && Array.isArray(data)))) {
@@ -208,7 +211,14 @@ window.create_settings = function (data, model) {
 						}
 					}
 					if (Array.isArray(value)) {
-						questionChangeModel('sc_add', confirm('Allow adding more "' + index_path + '"?'));
+						// todo: check that values are primitives
+						grid = value.reduce(function (a, v) { return a && Array.isArray(v) && v.length === value.length; }, true);
+						if (grid) {
+							questionChangeModel('sc_grid', confirm('Format "' + index_path + '" as grid?'));
+							questionChangeModel('sc_add', confirm('Allow adding more "' + index_path + '"?'));
+						} else if (!modelActive.sc_grid) {
+							questionChangeModel('sc_add', confirm('Allow adding more "' + index_path + '"?'));
+						}
 					}
 				} else {
 					questionChangeModel('sc_show', false);
@@ -231,7 +241,7 @@ window.create_settings = function (data, model) {
 	function checkModel() {
 		modelActive = {};
 		var option = model;
-		var settings = ['sc_add', 'sc_show']; // sc_type sc_options sc_description
+		var settings = ['sc_add', 'sc_show', 'sc_grid']; // sc_type sc_options sc_description
 
 		for (var j = 0; j < settings.length; j += 1) {
 			if (settings[j] in option) {

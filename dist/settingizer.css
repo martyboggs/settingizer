@@ -34,14 +34,6 @@
 }
 
 /* groups */
-.grid {
-
-}
-.grid-row {
-	display: flex;
-	padding: 10px 5px 0 5px;
-}
-
 .object-group,
 .array-group {
 	display: flex;
@@ -64,6 +56,20 @@
 
 .array-group > .array-group {
 	padding: 5px;
+}
+
+.grid {
+	flex-direction: column;
+}
+.grid-row {
+	display: flex;
+	padding: 10px 5px 0 5px;
+}
+.grid-buttons {
+	border: 0;
+}
+.grid-buttons button {
+	margin-right: 10px;
 }
 
 /* things with borders (.array-group *) need doubled 5px margin */
