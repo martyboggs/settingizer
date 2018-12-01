@@ -160,7 +160,7 @@ window.create_settings = function (data, model) {
 	}
 
 	function html(str) {
-		if (('sc_show' in modelActive) && !modelActive.sc_show) return;
+		if (('sc_show' in modelActive) && modelActive.sc_show === false) return;
 		htmlStr += str;
 		el.innerHTML = htmlStr;
 	}
@@ -207,17 +207,23 @@ window.create_settings = function (data, model) {
 		modelActive = {};
 		var option = model;
 		var settings = ['sc_add', 'sc_show']; // sc_type sc_options sc_description
+
+		for (var j = 0; j < settings.length; j += 1) {
+			if (settings[j] in option) {
+				modelActive[settings[j]] = option[settings[j]];
+			}
+		}
+
 		for (var i = 0; i < index.length; i += 1) {
+			option = option[index[i]];
+			if (option === undefined) break;
+
 			for (var j = 0; j < settings.length; j += 1) {
-				if (!(settings[j] in modelActive) && (settings[j] in option)) {
+				if (settings[j] in modelActive) continue; // already found
+				if (settings[j] in option) {
 					modelActive[settings[j]] = option[settings[j]];
 				}
 			}
-			if (option[index[i]] === undefined) {
-				break;
-			}
-
-			option = option[index[i]];
 		}
 	}
 
