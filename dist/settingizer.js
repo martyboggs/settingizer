@@ -290,55 +290,45 @@ window.create_settings = function (data, model) {
 	function initEvents() {
 		document.querySelector('.settings-creator').addEventListener('click', function (e) {
 			// delegate
-			var item;
-			if (e.target.matches('.add-item')) {
+			if (e.target.matches('.add-item') || e.target.matches('.add-y')) {
 				// todo: increment index
-				item = e.target.parentNode.previousSibling.cloneNode(true);
+				var item = e.target.parentNode.previousSibling.cloneNode(true);
+				fixIds(item);
 				e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
-
-				var fieldsets = item.querySelectorAll('div.fieldset');
-				if (item.matches('div.fieldset')) fieldsets = [item];
-				var label, input, prop, dupes;
-				for (var i = 0; i < fieldsets.length; i += 1) {
-					label = fieldsets[i].querySelector('label');
-					input = fieldsets[i].querySelector('input');
-
-					prop = input.dataset.key;
-					id = isNaN(prop) ? prop.toLowerCase() : 'a' + prop;
-					dupes = getAllIndexes(ids, id);
-					ids.push(id);
-					if (dupes > 0) { id += dupes; }
-
-					input.id = id;
-					label.htmlFor = id;
-				}
 			} else if (e.target.matches('.add-x') || e.target.matches('.add-y')) {
 				if (e.target.matches('.add-x')) {
-					item = e.target.parentNode.previousSibling.cloneNode(true);
-
+					var rows = e.target.parentNode.parentNode.querySelectorAll('.grid-row');
+					for (var i = 0; i < rows.length; i += 1) {
+						item = rows[i].children[rows[i].children.length - 1].cloneNode(true);
+						fixIds(item);
+						rows[i].appendChild(item);
+					}
 				} else {
-
-				}
-				e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
-
-				var fieldsets = item.querySelectorAll('div.fieldset');
-				if (item.matches('div.fieldset')) fieldsets = [item];
-				var label, input, prop, dupes;
-				for (var i = 0; i < fieldsets.length; i += 1) {
-					label = fieldsets[i].querySelector('label');
-					input = fieldsets[i].querySelector('input');
-
-					prop = input.dataset.key;
-					id = isNaN(prop) ? prop.toLowerCase() : 'a' + prop;
-					dupes = getAllIndexes(ids, id);
-					ids.push(id);
-					if (dupes > 0) { id += dupes; }
-
-					input.id = id;
-					label.htmlFor = id;
+					var item = e.target.parentNode.previousSibling.cloneNode(true);
+					fixIds(item);
+					e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
 				}
 			}
 		});
+	}
+
+	function fixIds(item) {
+		var fieldsets = item.querySelectorAll('div.fieldset');
+		if (item.matches('div.fieldset')) fieldsets = [item];
+		var label, input, prop, dupes;
+		for (var i = 0; i < fieldsets.length; i += 1) {
+			label = fieldsets[i].querySelector('label');
+			input = fieldsets[i].querySelector('input');
+
+			prop = input.dataset.key;
+			id = isNaN(prop) ? prop.toLowerCase() : 'a' + prop;
+			dupes = getAllIndexes(ids, id);
+			ids.push(id);
+			if (dupes > 0) { id += dupes; }
+
+			input.id = id;
+			if (label) label.htmlFor = id;
+		}
 	}
 
 	function htmlEncode(str) {

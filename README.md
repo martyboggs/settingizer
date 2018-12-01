@@ -19,7 +19,8 @@ Your config will be generated with these properties.
 | --- | --- | --- |
 | `sc_show` | true | Show/hide some property. |
 | `sc_type` | '' | Choose the type of data. |
-| `sc_keys` | [] | This is used to specify order of properties or unselected options for dropdowns, buttons, etc. |
+| `sc_keys` | [] | This is used to specify a complete list and order of properties. |
+| `sc_values` | [] | This is used to list all options, including unselected ones, for dropdowns, buttons, radios, checkboxes etc. |
 | `sc_description` | '' | Description text shows below the value area. |
 | `sc_add` | false | Let users add more array elements. |
 | `sc_grid` | false | If there's an array of arrays with equal length, you can create a grid. |
