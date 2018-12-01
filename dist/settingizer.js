@@ -25,7 +25,7 @@ window.create_settings = function (data, model) {
 
 	if (buildModel) {
 		// clean model
-		$(el).prepend('<p style="margin: 0;padding: 10px 10px 0 10px">Success! Your model has been generated.<br>Use it as the second argument for create_settings(obj, model).</p><textarea class="model" style="margin: 10px; max-width: none; width: calc(100% - 20px);"></textarea>');
+		el.innerHTML = '<p style="margin: 0;padding: 10px 10px 0 10px">Success! Your model has been generated.<br>Use it as the second argument for create_settings(obj, model).</p><textarea class="model" style="margin: 10px; max-width: none; width: calc(100% - 20px);"></textarea>' + el.innerHTML;
 		var modelEl = el.querySelector('.model');
 		if (modelEl) {
 			modelEl.innerHTML = JSON.stringify(model, false, 4);
@@ -34,7 +34,7 @@ window.create_settings = function (data, model) {
 		}
 	}
 
-	console.log(data, $('.settings-creator').serializeObject());
+	console.log('equivalence test', data, $('.settings-creator').serializeObject());
 
 	function traverse() {
 		traverses += 1;
@@ -93,7 +93,8 @@ window.create_settings = function (data, model) {
 				parent = value;
 				value = value[index[i]];
 			}
-			descriptions = {};
+			// reset descriptions
+			if (Array.isArray(parent)) descriptions = {};
 
 			nextProp();
 			traverse();
@@ -215,7 +216,7 @@ window.create_settings = function (data, model) {
 		}
 
 		for (var i = 0; i < index.length; i += 1) {
-			option = option[index[i]];
+			option = option[isNaN(index[i]) ? index[i] : 0];
 			if (option === undefined) break;
 
 			for (var j = 0; j < settings.length; j += 1) {
