@@ -34,8 +34,6 @@ window.create_settings = function (data, model) {
 		}
 	}
 
-	console.log('equivalence test', data, $('.settings-creator').serializeObject());
-
 	function traverse() {
 		traverses += 1;
 		if (traverses > 10000) return;
@@ -44,14 +42,16 @@ window.create_settings = function (data, model) {
 
 		// check for empty objects and arrays here
 		if ((Array.isArray(value) && value.length === 0) || (typeof value === 'object' && Object.keys(value).length === 0)) {
-			return nextProp();
+			nextProp();
+			traverse();
+			return;
 		}
 
+		checkModel();
 		if (buildModel) {
-			checkModel();
 			questions();
 		}
-		checkModel();
+		checkModel(); // if questions can checkModel too, this can be removed
 
 		if (Array.isArray(value)) {
 			// console.log('array');
@@ -94,7 +94,7 @@ window.create_settings = function (data, model) {
 				value = value[index[i]];
 			}
 			// reset descriptions
-			if (Array.isArray(parent)) descriptions = {};
+			if (!Array.isArray(parent) && typeof parent === 'object') descriptions = {};
 
 			nextProp();
 			traverse();
@@ -122,7 +122,7 @@ window.create_settings = function (data, model) {
 			ids.push(id);
 			if (dupes > 0) { id += dupes; }
 
-			html(labels);
+			html(labels, true);
 			labels = '';
 
 			var description = descriptions[prop] ? '<p class="description">' + descriptions[prop] + '</p>' : '';
@@ -160,8 +160,8 @@ window.create_settings = function (data, model) {
 		}
 	}
 
-	function html(str) {
-		if (('sc_show' in modelActive) && modelActive.sc_show === false) return;
+	function html(str, force) {
+		if (!force && ('sc_show' in modelActive) && modelActive.sc_show === false) return;
 		htmlStr += str;
 		el.innerHTML = htmlStr;
 	}

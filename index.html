@@ -8,7 +8,6 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="dist/settingizer.css" />
 	<style>
 	body {
-		font-family: sans-serif;
 		background: #e6ecf0;
 		margin: 30px;
 	}
@@ -298,7 +297,12 @@ var bcpo_settings = {
 // var bcpo_data = {ok: {ok2: {ok3: {ok4: 5}}}};
 // var bcpo_data = {cows: ['hey', 'hey', 'hey'], chickens: 'WHOA!'};
 
-	create_settings(bcpo_settings);
+	var data = bcpo_settings;
+
+	create_settings(data);
+	console.log('equivalence test');
+	console.log(data);
+	console.log($('.settings-creator').serializeObject());
 	</script>
 </body>
 </html>
