@@ -34,6 +34,14 @@
 }
 
 /* groups */
+.grid {
+
+}
+.grid-row {
+	display: flex;
+	padding: 10px 5px 0 5px;
+}
+
 .object-group,
 .array-group {
 	display: flex;
@@ -72,6 +80,9 @@
 }
 label.fieldset {
 	padding-bottom: 0;
+}
+.grid-row .fieldset {
+	padding: 0 5px 10px 5px;
 }
 
 .settings-creator .description {

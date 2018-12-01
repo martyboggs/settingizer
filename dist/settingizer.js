@@ -17,6 +17,7 @@ window.create_settings = function (data, model) {
 	var labels = '';
 	var descriptions = {};
 	var keys = [];
+	var gridCheck = 0;
 
 	document.body.innerHTML += '<form class="settings-creator"></form>';
 	var el = document.getElementsByClassName('settings-creator')[0];
@@ -49,31 +50,41 @@ window.create_settings = function (data, model) {
 
 		checkModel();
 		if (buildModel) {
-			questions();
+			// questions();
 		}
 		checkModel(); // if questions can checkModel too, this can be removed
 
 		if (Array.isArray(value)) {
 			// console.log('array');
+			if (index[index.length - 1] !== undefined) {
+				labels += isNaN(index[index.length - 1]) ? '<label class="fieldset">' + capitalize(index[index.length - 1]) + '</label>' : '';
+			}
+			// if array has as many arrays of the same length
+			if (!gridCheck) {
+				if (value.reduce(function (a, v) { return a && Array.isArray(v) && v.length === value.length; }, true)) {
+					gridCheck = value.length;
+					labels += '<div class="grid array-group">';
+				} else {
+					labels += '<div class="array-group">';
+				}
+			} else {
+				labels += '<div class="grid-row">';
+			}
 			index.push(0);
 			parent = value;
 			value = parent[0];
-			if (index[index.length - 2] !== undefined) {
-				labels += isNaN(index[index.length - 2]) ? '<label class="fieldset">' + capitalize(index[index.length - 2]) + '</label>' : '';
-			}
-			labels += '<div class="array-group">';
 			traverse();
 
 		} else if (typeof value === 'object' && value) { // typof null === 'object' :P
 			// console.log('object');
+			if (index[index.length - 1] !== undefined) {
+				labels += isNaN(index[index.length - 1]) ? '<label class="fieldset">' + capitalize(index[index.length - 1]) + '</label>' : '';
+			}
+			labels += '<div class="object-group">';
 			var keys = Object.keys(value);
 			index.push(keys[0]);
 			parent = value;
 			value = value[index[index.length - 1]];
-			if (index[index.length - 2] !== undefined) {
-				labels += isNaN(index[index.length - 2]) ? '<label class="fieldset">' + capitalize(index[index.length - 2]) + '</label>' : '';
-			}
-			labels += '<div class="object-group">';
 			traverse();
 
 		} else if (typeof value === 'function') {
@@ -84,6 +95,13 @@ window.create_settings = function (data, model) {
 				html('<div style="max-width: 100%; flex: 0 0 100%; border-color: transparent;"><button class="add-item" type="button">Add item</button></div>');
 			}
 			html('</div>');
+
+			if (gridCheck === 1) {
+				html('</div>');
+			}
+			if (gridCheck > 0) gridCheck--;
+
+
 			if (index.length === 1) {
 				return; // kill it
 			}
@@ -127,13 +145,19 @@ window.create_settings = function (data, model) {
 
 			var description = descriptions[prop] ? '<p class="description">' + descriptions[prop] + '</p>' : '';
 
-			html('<div class="fieldset"><label for="' + id + '">' + capitalize(prop) + '</label>');
-				if (type !== 'textarea') {
+			if (gridCheck) {
+				html('<div class="fieldset">');
 					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + value + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
+				html('</div>'); // close fieldset
+			} else {
+				html('<div class="fieldset"><label for="' + id + '">' + capitalize(prop) + '</label>');
+				if (type === 'textarea') {
+					html('<div><textarea rows="5" id="' +  id + '" name="' +  name + '"' + (value === 'on' ? ' checked' : '') + '>' + htmlEncode(value) + '</textarea></div>');
 				} else {
-					html('<div><textarea rows="5" id="' +  id + '" name="' +  name + '"' + (value === 'on' ? ' checked' : '') + '>' + value + '</textarea></div>');
+					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + value + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
 				}
-			html('</div>'); // close fieldset
+				html('</div>'); // close fieldset
+			}
 
 			nextProp();
 			traverse();
@@ -282,5 +306,11 @@ window.create_settings = function (data, model) {
 				}
 			}
 		});
+	}
+
+	function htmlEncode(str) {
+		var elt = document.createElement('span');
+		elt.textContent = str;
+		return elt.innerHTML;
 	}
 }
