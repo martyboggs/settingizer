@@ -1,0 +1,23 @@
+{
+  "name": "settingizer",
+  "version": "1.0.0",
+  "description": "Create settings pages from JSON objects",
+  "main": "dist/settingizer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martyboggs/settingizer.git"
+  },
+  "keywords": [
+    "settings",
+    "front-end"
+  ],
+  "author": "Marty Rutherford Boggs Jr. <whack47@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/martyboggs/settingizer/issues"
+  },
+  "homepage": "https://github.com/martyboggs/settingizer#readme"
+}

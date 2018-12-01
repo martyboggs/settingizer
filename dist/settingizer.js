@@ -1,7 +1,4 @@
 window.create_settings = function (data, model) {
-	// sc_ props for model
-	// sc_order - specify an order for object keys
-
 	if (typeof data === 'string') return console.log('don\'t pass string');
 
 	var htmlStr = '';
@@ -293,9 +290,35 @@ window.create_settings = function (data, model) {
 	function initEvents() {
 		document.querySelector('.settings-creator').addEventListener('click', function (e) {
 			// delegate
+			var item;
 			if (e.target.matches('.add-item')) {
 				// todo: increment index
-				var item = e.target.parentNode.previousSibling.cloneNode(true);
+				item = e.target.parentNode.previousSibling.cloneNode(true);
+				e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
+
+				var fieldsets = item.querySelectorAll('div.fieldset');
+				if (item.matches('div.fieldset')) fieldsets = [item];
+				var label, input, prop, dupes;
+				for (var i = 0; i < fieldsets.length; i += 1) {
+					label = fieldsets[i].querySelector('label');
+					input = fieldsets[i].querySelector('input');
+
+					prop = input.dataset.key;
+					id = isNaN(prop) ? prop.toLowerCase() : 'a' + prop;
+					dupes = getAllIndexes(ids, id);
+					ids.push(id);
+					if (dupes > 0) { id += dupes; }
+
+					input.id = id;
+					label.htmlFor = id;
+				}
+			} else if (e.target.matches('.add-x') || e.target.matches('.add-y')) {
+				if (e.target.matches('.add-x')) {
+					item = e.target.parentNode.previousSibling.cloneNode(true);
+
+				} else {
+
+				}
 				e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
 
 				var fieldsets = item.querySelectorAll('div.fieldset');
