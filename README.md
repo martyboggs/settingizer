@@ -9,7 +9,11 @@ Use the config as the second argument in production:
 
 `create_settings(data, config);`
 
-The data and config properties will both be used to generate settings. If the data and config are out of sync, there will be a warning in the console with information about which properties are out of sync.
+The data and config properties will both be used to generate settings. If the data and config are out of sync, there will be a warning in the console with information about which properties are out of sync. (doesn't work yet)
+
+`<div class="settingizer"></div>`
+
+A form element with your settings will be added to elements with the settingizer class. If no element is found, it's added to the `<body>` tag.
 
 ## Config Properties
 
