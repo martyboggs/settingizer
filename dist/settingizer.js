@@ -16,25 +16,25 @@ window.create_settings = function (data, model) {
 	var keys = [];
 	var gridCheck = 0;
 
-	setTimeout(function () { // in case it's run in <head>
-		var el = document.getElementsByClassName('settingizer')[0];
-		if (!el) el = document.body;
-		form = document.createElement('form');
-		el.appendChild(form);
-		traverse(); // create all elements
-		initEvents();
+	var el;
+	el = document.getElementsByClassName('settingizer')[0];
+	if (!el) el = document.body;
+	if (!el) return console.warn('Settingizer: Run create_settings() in body or add <div class="settingizer"></div>');
 
-		if (buildModel) {
-			// clean model
-			form.innerHTML = '<p style="margin: 0;padding: 10px 10px 0 10px">Success! Your model has been generated.<br>Use it as the second argument for create_settings(obj, model).</p><textarea class="model" style="margin: 10px; max-width: none; width: calc(100% - 20px);"></textarea>' + form.innerHTML;
-			var modelEl = form.querySelector('.model');
-			if (modelEl) {
-				modelEl.innerHTML = JSON.stringify(model, false, 4);
-				modelEl.style.height = '';
-				modelEl.style.height = modelEl.scrollHeight + 5 + 'px';
-			}
+	var form = document.createElement('form');
+	build_settings();
+	el.appendChild(form);
+
+	if (buildModel) {
+		// clean model
+		form.innerHTML = '<p class="sc-message">Success! Your model has been generated.<br>Use it as the second argument for create_settings(obj, model).</p><textarea class="config" style="margin: 10px; max-width: none; width: calc(100% - 20px);"></textarea>' + form.innerHTML;
+		var configEl = form.querySelector('.config');
+		if (configEl) {
+			configEl.innerHTML = JSON.stringify(model, false, 4);
+			configEl.style.height = '';
+			configEl.style.height = configEl.scrollHeight + 5 + 'px';
 		}
-	});
+	}
 
 	function traverse() {
 		traverses += 1;
@@ -191,6 +191,11 @@ window.create_settings = function (data, model) {
 		form.innerHTML = htmlStr;
 	}
 
+	function build_settings() {
+		traverse();
+		initEvents();
+	}
+
 	function questions() {
 		var show;
 		var grid;
@@ -290,7 +295,7 @@ window.create_settings = function (data, model) {
 	}
 
 	function initEvents() {
-		document.querySelector('.settingizer').addEventListener('click', function (e) {
+		el.addEventListener('click', function (e) {
 			// delegate
 			if (e.target.matches('.add-item') || e.target.matches('.add-y')) {
 				// todo: increment index

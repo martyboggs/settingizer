@@ -57,6 +57,11 @@
 	display: none;
 }
 
+.settingizer .sc-message {
+	margin: 0;
+	padding: 10px 10px 0 10px
+}
+
 /* groups */
 .object-group,
 .array-group {
@@ -99,11 +104,11 @@
 
 .fieldset {
 	display: flex;
-	padding: 0 10px 10px 10px;
+	padding: 10px 10px 0 10px;
 }
 .array-group > div.fieldset,
-.object-group > div.fieldset:first-child {
-	padding-top: 10px;
+.object-group > div.fieldset:last-child {
+	padding-bottom: 10px;
 }
 label.fieldset {
 	padding-bottom: 0;
