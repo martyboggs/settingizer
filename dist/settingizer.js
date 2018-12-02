@@ -293,7 +293,7 @@ window.create_settings = function (data, model) {
 	}
 
 	function initEvents() {
-		document.querySelector('.settings-creator').addEventListener('click', function (e) {
+		document.querySelector('.settingizer').addEventListener('click', function (e) {
 			// delegate
 			if (e.target.matches('.add-item') || e.target.matches('.add-y')) {
 				// todo: increment index
