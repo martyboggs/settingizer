@@ -33,64 +33,6 @@
 	margin-left: 0;
 }
 
-/* groups */
-.object-group,
-.array-group {
-	display: flex;
-	flex-wrap: wrap;
-}
-
-.object-group {
-	flex-direction: column;
-}
-
-.array-group {
-	margin: -5px;
-	padding: 10px 10px 10px 10px;
-}
-
-.array-group > * {
-	border: 1px solid #ddd;
-	margin: 5px;
-}
-
-.array-group > .array-group {
-	padding: 5px;
-}
-
-.grid {
-	flex-direction: column;
-}
-.grid-row {
-	display: flex;
-	padding: 10px 5px 0 5px;
-}
-.grid-buttons {
-	border: 0;
-}
-.grid-buttons button {
-	margin-right: 10px;
-}
-
-/* things with borders (.array-group *) need doubled 5px margin */
-/* negative margin brings border back to left baseline */
-/* inside borders (including form border) need 10px padding (no doubling or neg margin tricks) */
-
-.fieldset {
-	display: flex;
-	padding: 0 10px 10px 10px;
-}
-.array-group > div.fieldset,
-.object-group > div.fieldset:first-child {
-	padding-top: 10px;
-}
-label.fieldset {
-	padding-bottom: 0;
-}
-.grid-row .fieldset {
-	padding: 0 5px 10px 5px;
-}
-
 .settingizer .description {
 	font-size: 12px;
 	color: #657786;
@@ -109,4 +51,59 @@ label.fieldset {
 
 .settingizer button:hover {
 	opacity: 0.8;
+}
+
+/* groups */
+.object-group,
+.array-group {
+	display: flex;
+	flex-wrap: wrap;
+}
+.object-group {
+	flex-direction: column;
+}
+.array-group {
+	margin: -5px;
+	padding: 10px 10px 10px 10px;
+}
+.array-group > * {
+	border: 1px solid #ddd;
+	margin: 5px;
+}
+.array-group > .array-group {
+	padding: 5px;
+}
+.array-button {
+	max-width: 100%;
+	flex: 0 0 100%;
+	border-color: transparent;
+}
+
+.grid {
+	flex-direction: column;
+}
+.grid-row {
+	display: flex;
+	padding: 10px 5px 0 5px;
+}
+.grid-buttons {
+	border: 0;
+}
+.grid-buttons button {
+	margin-right: 10px;
+}
+
+.fieldset {
+	display: flex;
+	padding: 0 10px 10px 10px;
+}
+.array-group > div.fieldset,
+.object-group > div.fieldset:first-child {
+	padding-top: 10px;
+}
+label.fieldset {
+	padding-bottom: 0;
+}
+.grid-row .fieldset {
+	padding: 0 5px 10px 5px;
 }

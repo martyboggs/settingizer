@@ -24,18 +24,18 @@ window.create_settings = function (data, model) {
 		el.appendChild(form);
 		traverse(); // create all elements
 		initEvents();
-	});
 
-	if (buildModel) {
-		// clean model
-		form.innerHTML = '<p style="margin: 0;padding: 10px 10px 0 10px">Success! Your model has been generated.<br>Use it as the second argument for create_settings(obj, model).</p><textarea class="model" style="margin: 10px; max-width: none; width: calc(100% - 20px);"></textarea>' + form.innerHTML;
-		var modelEl = form.querySelector('.model');
-		if (modelEl) {
-			modelEl.innerHTML = JSON.stringify(model, false, 4);
-			modelEl.style.height = '';
-			modelEl.style.height = modelEl.scrollHeight + 5 + 'px';
+		if (buildModel) {
+			// clean model
+			form.innerHTML = '<p style="margin: 0;padding: 10px 10px 0 10px">Success! Your model has been generated.<br>Use it as the second argument for create_settings(obj, model).</p><textarea class="model" style="margin: 10px; max-width: none; width: calc(100% - 20px);"></textarea>' + form.innerHTML;
+			var modelEl = form.querySelector('.model');
+			if (modelEl) {
+				modelEl.innerHTML = JSON.stringify(model, false, 4);
+				modelEl.style.height = '';
+				modelEl.style.height = modelEl.scrollHeight + 5 + 'px';
+			}
 		}
-	}
+	});
 
 	function traverse() {
 		traverses += 1;
@@ -94,7 +94,7 @@ window.create_settings = function (data, model) {
 		} else if (value === undefined) {
 			// console.log('none');
 			if (Array.isArray(parent) && modelActive.sc_add && gridCheck === 0) {
-				html('<div style="max-width: 100%; flex: 0 0 100%; border-color: transparent;"><button class="add-item" type="button">Add item</button></div>');
+				html('<div class="array-button"><button class="add-item" type="button">Add item</button></div>');
 			}
 			html('</div>');
 
@@ -243,7 +243,7 @@ window.create_settings = function (data, model) {
 	function checkModel() {
 		modelActive = {};
 		var option = model;
-		var settings = ['sc_add', 'sc_show', 'sc_grid']; // sc_type sc_options sc_description
+		var settings = ['sc_add', 'sc_show', 'sc_grid', 'sc_description']; // sc_type sc_options
 
 		for (var j = 0; j < settings.length; j += 1) {
 			if (settings[j] in option) {
