@@ -12,7 +12,6 @@ window.create_settings = function (data, model) {
 	var model = model || {};
 	var modelActive = {};
 	var traverses = 0;
-	var labels = '';
 	var descriptions = {};
 	var keys = [];
 	var gridCheck = 0;
@@ -55,22 +54,23 @@ window.create_settings = function (data, model) {
 			questions();
 		}
 		checkModel(); // if questions can checkModel too, this can be removed
+		var sc_hide = modelActive.sc_show === false ? ' sc-hide' : '';
 
 		if (Array.isArray(value)) {
 			// console.log('array');
-			if (index[index.length - 1] !== undefined) {
-				labels += isNaN(index[index.length - 1]) ? '<label class="fieldset">' + capitalize(index[index.length - 1]) + '</label>' : '';
+			if (index[index.length - 1] !== undefined && isNaN(index[index.length - 1])) {
+				html('<label class="fieldset' + sc_hide + '">' + capitalize(index[index.length - 1]) + '</label>');
 			}
 			// if array has as many arrays of the same length
 			if (!gridCheck) {
 				if (modelActive.sc_grid) {
 					gridCheck = value.length;
-					labels += '<div class="grid array-group">';
+					html('<div class="grid array-group' + sc_hide + '">');
 				} else {
-					labels += '<div class="array-group">';
+					html('<div class="array-group' + sc_hide + '">');
 				}
 			} else {
-				labels += '<div class="grid-row">';
+				html('<div class="grid-row' + sc_hide + '">');
 			}
 			index.push(0);
 			parent = value;
@@ -79,10 +79,11 @@ window.create_settings = function (data, model) {
 
 		} else if (typeof value === 'object' && value) { // typof null === 'object' :P
 			// console.log('object');
-			if (index[index.length - 1] !== undefined) {
-				labels += isNaN(index[index.length - 1]) ? '<label class="fieldset">' + capitalize(index[index.length - 1]) + '</label>' : '';
+
+			if (index[index.length - 1] !== undefined && isNaN(index[index.length - 1])) {
+				html('<label class="fieldset' + sc_hide + '">' + capitalize(index[index.length - 1]) + '</label>');
 			}
-			labels += '<div class="object-group">';
+			html('<div class="object-group' + sc_hide + '">');
 			var keys = Object.keys(value);
 			index.push(keys[0]);
 			parent = value;
@@ -144,17 +145,14 @@ window.create_settings = function (data, model) {
 			ids.push(id);
 			if (dupes > 0) { id += dupes; }
 
-			html(labels, true);
-			labels = '';
-
 			var description = descriptions[prop] ? '<p class="description">' + descriptions[prop] + '</p>' : '';
 
 			if (gridCheck) {
-				html('<div class="fieldset">');
+				html('<div class="fieldset' + sc_hide + '">');
 					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + value + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
 				html('</div>'); // close fieldset
 			} else {
-				html('<div class="fieldset"><label for="' + id + '">' + capitalize(prop) + '</label>');
+				html('<div class="fieldset' + sc_hide + '"><label for="' + id + '">' + capitalize(prop) + '</label>');
 				if (type === 'textarea') {
 					html('<div><textarea rows="5" id="' +  id + '" name="' +  name + '"' + (value === 'on' ? ' checked' : '') + '>' + htmlEncode(value) + '</textarea></div>');
 				} else {
@@ -188,8 +186,7 @@ window.create_settings = function (data, model) {
 		}
 	}
 
-	function html(str, force) {
-		if (!force && modelActive.sc_show === false) return;
+	function html(str) {
 		htmlStr += str;
 		form.innerHTML = htmlStr;
 	}

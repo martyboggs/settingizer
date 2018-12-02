@@ -53,6 +53,10 @@
 	opacity: 0.8;
 }
 
+.settingizer .sc-hide {
+	display: none;
+}
+
 /* groups */
 .object-group,
 .array-group {
