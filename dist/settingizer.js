@@ -1,6 +1,7 @@
 window.create_settings = function (data, model) {
 	if (typeof data === 'string') return console.log('don\'t pass string');
 
+	var form;
 	var htmlStr = '';
 
 	var index = [];
@@ -16,15 +17,19 @@ window.create_settings = function (data, model) {
 	var keys = [];
 	var gridCheck = 0;
 
-	document.body.innerHTML += '<form class="settings-creator"></form>';
-	var el = document.getElementsByClassName('settings-creator')[0];
-	traverse(); // create all elements
-	initEvents();
+	setTimeout(function () { // in case it's run in <head>
+		var el = document.getElementsByClassName('settingizer')[0];
+		if (!el) el = document.body;
+		form = document.createElement('form');
+		el.appendChild(form);
+		traverse(); // create all elements
+		initEvents();
+	});
 
 	if (buildModel) {
 		// clean model
-		el.innerHTML = '<p style="margin: 0;padding: 10px 10px 0 10px">Success! Your model has been generated.<br>Use it as the second argument for create_settings(obj, model).</p><textarea class="model" style="margin: 10px; max-width: none; width: calc(100% - 20px);"></textarea>' + el.innerHTML;
-		var modelEl = el.querySelector('.model');
+		form.innerHTML = '<p style="margin: 0;padding: 10px 10px 0 10px">Success! Your model has been generated.<br>Use it as the second argument for create_settings(obj, model).</p><textarea class="model" style="margin: 10px; max-width: none; width: calc(100% - 20px);"></textarea>' + form.innerHTML;
+		var modelEl = form.querySelector('.model');
 		if (modelEl) {
 			modelEl.innerHTML = JSON.stringify(model, false, 4);
 			modelEl.style.height = '';
@@ -186,7 +191,7 @@ window.create_settings = function (data, model) {
 	function html(str, force) {
 		if (!force && modelActive.sc_show === false) return;
 		htmlStr += str;
-		el.innerHTML = htmlStr;
+		form.innerHTML = htmlStr;
 	}
 
 	function questions() {

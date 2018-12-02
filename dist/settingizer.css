@@ -1,4 +1,4 @@
-.settings-creator {
+.settingizer {
 	font-family: "Segoe UI", Helvetica, sans-serif;
 	font-size: 14px;
 	color: #14171a;
@@ -7,29 +7,29 @@
 	padding: 20px;
 }
 
-.settings-creator * {
+.settingizer * {
 	box-sizing: border-box;
 }
 
-.settings-creator p {
+.settingizer p {
 	margin: 0 0 10px 0;
 }
 
-.settings-creator label {
+.settingizer label {
 	display: block;
 	min-width: 165px;
 }
 
-.settings-creator input[type="text"],
-.settings-creator input[type="number"],
-.settings-creator input[type="search"],
-.settings-creator textarea {
+.settingizer input[type="text"],
+.settingizer input[type="number"],
+.settingizer input[type="search"],
+.settingizer textarea {
 	width: 100%;
 	max-width: 180px;
 }
 
-.settings-creator input[type="checkbox"],
-.settings-creator input[type="radio"] {
+.settingizer input[type="checkbox"],
+.settingizer input[type="radio"] {
 	margin-left: 0;
 }
 
@@ -91,14 +91,14 @@ label.fieldset {
 	padding: 0 5px 10px 5px;
 }
 
-.settings-creator .description {
+.settingizer .description {
 	font-size: 12px;
 	color: #657786;
 	margin: 5px 0 0 0;
 	line-height: 1.7;
 }
 
-.settings-creator button {
+.settingizer button {
 	background: #1393d1;
 	color: white;
 	border: 0;
@@ -107,6 +107,6 @@ label.fieldset {
 	align-self: flex-start;
 }
 
-.settings-creator button:hover {
+.settingizer button:hover {
 	opacity: 0.8;
 }
