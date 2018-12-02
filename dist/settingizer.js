@@ -13,7 +13,7 @@ window.create_settings = function (data, model) {
 	var modelActive = {};
 	var traverses = 0;
 	var descriptions = {};
-	var keys = [];
+	var allKeys = [];
 	var gridCheck = 0;
 
 	var el;
@@ -145,7 +145,7 @@ window.create_settings = function (data, model) {
 			ids.push(id);
 			if (dupes > 0) { id += dupes; }
 
-			var description = descriptions[prop] ? '<p class="description">' + descriptions[prop] + '</p>' : '';
+			var description = modelActive.sc_description ? '<p class="description">' + modelActive.sc_description + '</p>' : '';
 
 			if (gridCheck) {
 				html('<div class="fieldset' + sc_hide + '">');
@@ -197,41 +197,77 @@ window.create_settings = function (data, model) {
 	}
 
 	function questions() {
-		var show;
+		var show = modelActive.sc_show !== false;
 		var grid;
 		var description;
+		var prop = index[index.length - 1];
+		var childOf0 = childrenOf0();
+		var index_path = index.reduce(function (p, c) { return p ? p + '->' + c : c; }, '');
+		index_path = index_path || 'Root Item';
+
 		// console.log('question', index);
-		if (!('sc_show' in modelActive) && (index[index.length - 1] !== undefined || (index[index.length - 1] === undefined && Array.isArray(data)))) {
-			var index_path = index.reduce(function (p, c) { return p ? p + '->' + c : c; }, '');
-			if (!index_path) index_path = 'Root Item';
-			if (notArrayItem()) {
+		if (!show) return; // higher level is hidden already
+		if (prop !== undefined || (prop === undefined && Array.isArray(data))) {
+			if (childOf0) {
 				show = confirm('Show "' + index_path + '"?');
 				if (show) {
-					if (typeof value !== 'object') {
+					if (typeof value !== 'object') { // not array or object
 						description = prompt('Description for "' + index_path + '" ?', '');
 						if (description) {
-							descriptions[index[index.length - 1]] = description;
-							questionChangeModel('sc_description', description);
+							descriptions[prop] = description;
+							questionGetParent()['sc_description'] = description;
 						}
 					}
 					if (Array.isArray(value)) {
 						// todo: check that values are primitives
 						grid = value.reduce(function (a, v) { return a && Array.isArray(v) && v.length === value.length; }, true);
 						if (grid) {
-							questionChangeModel('sc_grid', confirm('Format "' + index_path + '" as grid?'));
-							questionChangeModel('sc_add', confirm('Allow adding more "' + index_path + '"?'));
+							questionGetParent()['sc_grid'] = confirm('Format "' + index_path + '" as grid?');
+							questionGetParent()['sc_add'] = confirm('Allow adding more "' + index_path + '"?');
 						} else if (!modelActive.sc_grid) {
-							questionChangeModel('sc_add', confirm('Allow adding more "' + index_path + '"?'));
+							questionGetParent()['sc_add'] = confirm('Allow adding more "' + index_path + '"?');
 						}
 					}
 				} else {
-					questionChangeModel('sc_show', false);
+					questionGetParent()['sc_show'] =  false;
+				}
+			}
+		}
+
+		if (childOf0 && !Array.isArray(value) && typeof value === 'object') {
+			var unique = [];
+			var arr;
+			if (Array.isArray(parent)) {
+				arr = parent.reduce(function (a, v) { return a.push(Object.keys(v)); }, []);
+				for (var i = 0; i < arr.length; i += 1) {
+					for (var j = 0; j < arr[i].length; j += 1) {
+						if (unique.indexOf(arr[i][j]) === -1) {
+							unique.push(arr[i][j]);
+						}
+					}
+				}
+			} else {
+				unique = Object.keys(value);
+			}
+			var keyStr = prompt('Enter all the available keys for "' + index_path + '" in the order you want.', unique.join(','));
+			allKeys = keyStr.split(',');
+			allKeys = allKeys.map(function (key) { return key.trim(); });
+			allKeys = allKeys.reduce(function (a, v) { if (v && a.indexOf(v) === -1) { a.push(v); } return a; }, []);
+			var type;
+			var validTypes = ['text', 'number', 'button', 'radio', 'checkbox'];
+			for (var i = 0; i < allKeys.length; i += 1) {
+				questionGetParent()[allKeys[i]] = {};
+				if (unique.indexOf(allKeys[i]) === -1) {
+					type = prompt('Enter the type for ' + allKeys[i] + '. Valid answers: ' + validTypes.join(', '));
+					if (validTypes.indexOf(type) !== -1) {
+						questionGetParent()[allKeys[i]]['sc_type'] = type;
+					}
 				}
 			}
 		}
 	}
 
-	function questionChangeModel(key, value) {
+	function questionGetParent() {
 		var option = model;
 		for (var i = 0; i < index.length; i += 1) {
 			if (option[index[i]] === undefined) {
@@ -239,7 +275,7 @@ window.create_settings = function (data, model) {
 			}
 			option = option[index[i]];
 		}
-		option[key] = value;
+		return option;
 	}
 
 	function checkModel() {
@@ -266,7 +302,7 @@ window.create_settings = function (data, model) {
 		}
 	}
 
-	function notArrayItem() {
+	function childrenOf0() {
 		// false: if any indexes are num and (>0 or 0 at the end will fail)
 		for (var i = 0; i < index.length; i += 1) {
 			if (!isNaN(index[i]) && (index[i] !== 0 || (index[i] === 0 && i === index.length - 1))) {

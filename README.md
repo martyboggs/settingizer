@@ -13,7 +13,7 @@ The data and config properties will both be used to generate settings. If the da
 
 `<div class="settingizer"></div>`
 
-A form element with your settings will be added to elements with the settingizer class. If no element is found, it's added to the `<body>` tag.
+Add a `div` with the `settingzer` class. If no element is found, the settings will be added to the `<body>`.
 
 ## Config Properties
 
@@ -23,7 +23,6 @@ Your config will be generated with these properties.
 | --- | --- | --- | --- |
 | `sc_show` | true | Show/hide some property. | yes |
 | `sc_type` | '' | Choose the type of data. | no |
-| `sc_keys` | [] | This is used to specify a complete list and order of properties. | no |
 | `sc_values` | [] | This is used to list all options, including unselected ones, for dropdowns, buttons, radios, checkboxes etc. | no |
 | `sc_description` | '' | Description text shows below the value area. | yes |
 | `sc_add` | false | Let users add more array elements. | yes |
