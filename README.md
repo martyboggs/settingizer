@@ -1,4 +1,9 @@
 # Settingizer
+Include the CSS and JS files in your project:
+
+`<link rel="stylesheet" href="/settingizer/dist/settingizer.css" />`
+`<script src="/settingizer/dist/settingizer.js"></script>`
+
 Create settings pages from JS objects.
 
 `create_settings(data);`
@@ -9,7 +14,7 @@ Use the config as the second argument in production:
 
 `create_settings(data, config);`
 
-The data and config properties will both be used to generate settings. If the data and config are out of sync, there will be a warning in the console with information about which properties are out of sync. (warnings not built yet)
+The data and config properties will both be used to generate settings. If the data and config are out of sync, there will be a warning in the console with information about which properties are out of sync.
 
 `<div class="settingizer"></div>`
 

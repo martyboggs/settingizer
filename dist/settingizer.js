@@ -1,20 +1,26 @@
-window.create_settings = function (data, model) {
-	if (typeof data === 'string') return console.log('don\'t pass string');
+function create_settings(data, model) {
+	console.log('data', data);
+	console.log('config', model);
+	if (typeof data === 'string') {
+		// todo: parse json
+		return console.log('don\'t pass string');
+	}
+	data = Object.assign({}, data);
 
-	var form;
 	var htmlStr = '';
 
 	var index = [];
 	var parent = data;
 	var value = data;
-	var ids = [];
 	var buildModel = !model;
 	var model = model || {};
 	var modelActive = {};
-	var traverses = 0;
+	var ids = [];
 	var descriptions = {};
-	var allKeys = [];
 	var gridCheck = 0;
+	var index_path;
+
+	var traverses = 0;
 
 	var el;
 	el = document.getElementsByClassName('settingizer')[0];
@@ -40,7 +46,10 @@ window.create_settings = function (data, model) {
 		traverses += 1;
 		if (traverses > 10000) return;
 		// console.log(traverses);
-		// console.log('value:', value, 'parent: ', parent, index);
+		// console.log(index, 'value:', value, 'parent: ', parent);
+
+		index_path = index.reduce(function (p, c) { return p ? p + '->' + c : c; }, '');
+		index_path = index_path ? '"' + index_path + '"' : 'the root object';
 
 		// check for empty objects and arrays here
 		if ((Array.isArray(value) && value.length === 0) || (typeof value === 'object' && Object.keys(value).length === 0)) {
@@ -55,6 +64,28 @@ window.create_settings = function (data, model) {
 		}
 		checkModel(); // if questions can checkModel too, this can be removed
 		var sc_hide = modelActive.sc_show === false ? ' sc-hide' : '';
+
+		if (!buildModel) {
+			if (childrenOf0() && !Array.isArray(value) && typeof value === 'object') {
+				var data_keys = getDataKeys();
+				var model_value = model;
+				for (var i = 0; i < index.length; i += 1) {
+					if (model_value) {
+						model_value = model_value[index[i]];
+					} else {
+						console.warn('Config is missing all the keys for ' + index_path);
+						break;
+					}
+				}
+				if (model_value) {
+					var model_keys = Object.keys(model_value);
+					var extra_data = data_keys.reduce(function (a, v) { if (model_keys.indexOf(v) === -1) { a.push(v); } return a; }, []);
+					if (extra_data.length) console.warn('Config is missing ' + extra_data.join(', ') + ' from ' + index_path + '.');
+				}
+				// put in combined
+				value.sc_keys = interlace(data_keys, model_keys);
+			}
+		}
 
 		if (Array.isArray(value)) {
 			// console.log('array');
@@ -75,20 +106,16 @@ window.create_settings = function (data, model) {
 			index.push(0);
 			parent = value;
 			value = parent[0];
-			traverse();
 
 		} else if (typeof value === 'object' && value) { // typof null === 'object' :P
 			// console.log('object');
-
 			if (index[index.length - 1] !== undefined && isNaN(index[index.length - 1])) {
 				html('<label class="fieldset' + sc_hide + '">' + capitalize(index[index.length - 1]) + '</label>');
 			}
 			html('<div class="object-group' + sc_hide + '">');
-			var keys = Object.keys(value);
-			index.push(keys[0]);
+			index.push(getFirstObject().sc_keys[0]);
 			parent = value;
 			value = value[index[index.length - 1]];
-			traverse();
 
 		} else if (typeof value === 'function') {
 
@@ -120,7 +147,6 @@ window.create_settings = function (data, model) {
 			if (!Array.isArray(parent) && typeof parent === 'object') descriptions = {};
 
 			nextProp();
-			traverse();
 
 		} else {
 			// console.log('new fieldset');
@@ -160,23 +186,18 @@ window.create_settings = function (data, model) {
 				}
 				html('</div>'); // close fieldset
 			}
-
 			nextProp();
-			traverse();
 		}
+		traverse();
 	}
 
 	function nextProp() {
 		if (Array.isArray(parent)) {
 			index[index.length - 1] += 1;
 		} else {
-			var keys = Object.keys(parent);
-			for (var i = 0; i < keys.length; i += 1) {
-				if (keys[i] === index[index.length - 1]) {
-					break;
-				}
-			}
-			index[index.length - 1] = keys[i + 1];
+			var obj = getFirstObjectParent();
+			var i = obj.sc_keys.indexOf(index[index.length - 1]);
+			index[index.length - 1] = obj.sc_keys[i + 1];
 		}
 
 		value = data; // reset value before traversing
@@ -201,18 +222,15 @@ window.create_settings = function (data, model) {
 		var grid;
 		var description;
 		var prop = index[index.length - 1];
-		var childOf0 = childrenOf0();
-		var index_path = index.reduce(function (p, c) { return p ? p + '->' + c : c; }, '');
-		index_path = index_path || 'Root Item';
 
 		// console.log('question', index);
 		if (!show) return; // higher level is hidden already
 		if (prop !== undefined || (prop === undefined && Array.isArray(data))) {
-			if (childOf0) {
-				show = confirm('Show "' + index_path + '"?');
+			if (childrenOf0NoItem()) {
+				show = confirm('Show ' + index_path + '?');
 				if (show) {
 					if (typeof value !== 'object') { // not array or object
-						description = prompt('Description for "' + index_path + '" ?', '');
+						description = prompt('Description for ' + index_path + '?', '');
 						if (description) {
 							descriptions[prop] = description;
 							questionGetParent()['sc_description'] = description;
@@ -222,10 +240,10 @@ window.create_settings = function (data, model) {
 						// todo: check that values are primitives
 						grid = value.reduce(function (a, v) { return a && Array.isArray(v) && v.length === value.length; }, true);
 						if (grid) {
-							questionGetParent()['sc_grid'] = confirm('Format "' + index_path + '" as grid?');
-							questionGetParent()['sc_add'] = confirm('Allow adding more "' + index_path + '"?');
+							questionGetParent()['sc_grid'] = confirm('Format ' + index_path + ' as grid?');
+							questionGetParent()['sc_add'] = confirm('Allow adding more ' + index_path + '?');
 						} else if (!modelActive.sc_grid) {
-							questionGetParent()['sc_add'] = confirm('Allow adding more "' + index_path + '"?');
+							questionGetParent()['sc_add'] = confirm('Allow adding more ' + index_path + '?');
 						}
 					}
 				} else {
@@ -234,36 +252,31 @@ window.create_settings = function (data, model) {
 			}
 		}
 
-		if (childOf0 && !Array.isArray(value) && typeof value === 'object') {
-			var unique = [];
-			var arr;
-			if (Array.isArray(parent)) {
-				arr = parent.reduce(function (a, v) { return a.push(Object.keys(v)); }, []);
-				for (var i = 0; i < arr.length; i += 1) {
-					for (var j = 0; j < arr[i].length; j += 1) {
-						if (unique.indexOf(arr[i][j]) === -1) {
-							unique.push(arr[i][j]);
+		// find all unique props for this level
+		if (childrenOf0() && !Array.isArray(value) && typeof value === 'object') {
+			var data_keys = getDataKeys();
+			var model_keys = [];
+
+			var keyStr = prompt('Enter all the available keys for ' + index_path + ' in the order you want them.', data_keys.join(','));
+			if (keyStr) {
+				model_keys = keyStr.split(',');
+				model_keys = model_keys.map(function (key) { return key.trim(); });
+				model_keys = model_keys.reduce(function (a, v) { if (v && a.indexOf(v) === -1) { a.push(v); } return a; }, []);
+				var type;
+				var validTypes = ['text', 'number', 'button', 'radio', 'checkbox'];
+				var new_parent;
+				for (var i = 0; i < model_keys.length; i += 1) {
+					new_parent = questionGetParent();
+					new_parent[model_keys[i]] = {};
+					if (data_keys.indexOf(model_keys[i]) === -1) {
+						type = prompt('Enter the type for ' + model_keys[i] + '. Valid answers: ' + validTypes.join(', '));
+						if (validTypes.indexOf(type) !== -1) {
+							new_parent[model_keys[i]]['sc_type'] = type;
 						}
 					}
 				}
-			} else {
-				unique = Object.keys(value);
 			}
-			var keyStr = prompt('Enter all the available keys for "' + index_path + '" in the order you want.', unique.join(','));
-			allKeys = keyStr.split(',');
-			allKeys = allKeys.map(function (key) { return key.trim(); });
-			allKeys = allKeys.reduce(function (a, v) { if (v && a.indexOf(v) === -1) { a.push(v); } return a; }, []);
-			var type;
-			var validTypes = ['text', 'number', 'button', 'radio', 'checkbox'];
-			for (var i = 0; i < allKeys.length; i += 1) {
-				questionGetParent()[allKeys[i]] = {};
-				if (unique.indexOf(allKeys[i]) === -1) {
-					type = prompt('Enter the type for ' + allKeys[i] + '. Valid answers: ' + validTypes.join(', '));
-					if (validTypes.indexOf(type) !== -1) {
-						questionGetParent()[allKeys[i]]['sc_type'] = type;
-					}
-				}
-			}
+			value.sc_keys = interlace(data_keys, model_keys);
 		}
 	}
 
@@ -276,6 +289,54 @@ window.create_settings = function (data, model) {
 			option = option[index[i]];
 		}
 		return option;
+	}
+
+	function getFirstObject() {
+		var val = data;
+		for (var i = 0; i < index.length; i += 1) {
+			val = val[isNaN(index[i]) ? index[i] : 0];
+		}
+		return val;
+	}
+
+	function getFirstObjectParent() {
+		var val = data;
+		for (var i = 0; i < index.length - 1; i += 1) {
+			val = val[isNaN(index[i]) ? index[i] : 0];
+		}
+		return val;
+	}
+
+	function getDataKeys() {
+		var keys = [];
+		if (Array.isArray(parent)) {
+			arr = parent.reduce(function (a, v) { a.push(Object.keys(v)); return a; }, []);
+			for (var i = 0; i < arr.length; i += 1) {
+				for (var j = 0; j < arr[i].length; j += 1) {
+					if (keys.indexOf(arr[i][j]) === -1) {
+						keys.push(arr[i][j]);
+					}
+				}
+			}
+		} else {
+			keys = Object.keys(value);
+		}
+		return keys;
+	}
+
+	function interlace(a, b) {
+		if (!a && !b) return [];
+		if (!b) return a;
+		if (!a) return b;
+		var arr = [];
+		for (var i = 0; i < a.length; i += 1) {
+			arr.push(a[i]);
+			if (b[i] && arr.indexOf(b[i]) === -1) arr.push(b[i]);
+		}
+		for (var j = i; j < b.length; j += 1) {
+			if (arr.indexOf(b[j]) === -1) arr.push(b[j]);
+		}
+		return arr;
 	}
 
 	function checkModel() {
@@ -302,10 +363,20 @@ window.create_settings = function (data, model) {
 		}
 	}
 
-	function childrenOf0() {
-		// false: if any indexes are num and (>0 or 0 at the end will fail)
+	function childrenOf0NoItem() {
+		// false: if any indexes are num and (not 0 or 0 at the end will fail)
 		for (var i = 0; i < index.length; i += 1) {
 			if (!isNaN(index[i]) && (index[i] !== 0 || (index[i] === 0 && i === index.length - 1))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	function childrenOf0() {
+		// false: if any indexes are num and not 0
+		for (var i = 0; i < index.length; i += 1) {
+			if (!isNaN(index[i]) && (index[i] !== 0)) {
 				return false;
 			}
 		}
