@@ -2,6 +2,7 @@
 Include the CSS and JS files in your project:
 
 `<link rel="stylesheet" href="/settingizer/dist/settingizer.css" />`
+
 `<script src="/settingizer/dist/settingizer.js"></script>`
 
 Create settings pages from JS objects.

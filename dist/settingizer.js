@@ -46,7 +46,7 @@ function create_settings(data, model) {
 		traverses += 1;
 		if (traverses > 10000) return;
 		// console.log(traverses);
-		// console.log(index, 'value:', value, 'parent: ', parent);
+		// console.log('index: ', index, 'value: ', value, 'parent: ', parent);
 
 		index_path = index.reduce(function (p, c) { return p ? p + '->' + c : c; }, '');
 		index_path = index_path ? '"' + index_path + '"' : 'the root object';
@@ -83,7 +83,7 @@ function create_settings(data, model) {
 					if (extra_data.length) console.warn('Config is missing ' + extra_data.join(', ') + ' from ' + index_path + '.');
 				}
 				// put in combined
-				value.sc_keys = interlace(data_keys, model_keys);
+				value.sc_keys = concatUnique(model_keys, data_keys);
 			}
 		}
 
@@ -113,7 +113,8 @@ function create_settings(data, model) {
 				html('<label class="fieldset' + sc_hide + '">' + capitalize(index[index.length - 1]) + '</label>');
 			}
 			html('<div class="object-group' + sc_hide + '">');
-			index.push(getFirstObject().sc_keys[0]);
+			var all_keys = getFirstObject().sc_keys;
+			index.push(all_keys[0]);
 			parent = value;
 			value = value[index[index.length - 1]];
 
@@ -218,65 +219,69 @@ function create_settings(data, model) {
 	}
 
 	function questions() {
+		// console.log('question', index);
 		var show = modelActive.sc_show !== false;
 		var grid;
 		var description;
 		var prop = index[index.length - 1];
 
-		// console.log('question', index);
-		if (!show) return; // higher level is hidden already
-		if (prop !== undefined || (prop === undefined && Array.isArray(data))) {
-			if (childrenOf0NoItem()) {
-				show = confirm('Show ' + index_path + '?');
-				if (show) {
-					if (typeof value !== 'object') { // not array or object
-						description = prompt('Description for ' + index_path + '?', '');
-						if (description) {
-							descriptions[prop] = description;
-							questionGetParent()['sc_description'] = description;
+		if (show) { // higher level says show
+			if (prop !== undefined || (prop === undefined && Array.isArray(data))) {
+				if (childrenOf0NoItem()) {
+					show = confirm('Show ' + index_path + '?');
+					if (!show) {
+						questionGetParent()['sc_show'] =  false;
+					} else {
+						if (typeof value !== 'object') { // not array or object
+							description = prompt('Description for ' + index_path + '?', '');
+							if (description) {
+								descriptions[prop] = description;
+								questionGetParent()['sc_description'] = description;
+							}
+						}
+						if (Array.isArray(value)) {
+							// todo: check that values are primitives
+							grid = value.reduce(function (a, v) { return a && Array.isArray(v) && v.length === value.length; }, true);
+							if (grid) {
+								questionGetParent()['sc_grid'] = confirm('Format ' + index_path + ' as grid?');
+								questionGetParent()['sc_add'] = confirm('Allow adding more ' + index_path + '?');
+							} else if (!modelActive.sc_grid) {
+								questionGetParent()['sc_add'] = confirm('Allow adding more ' + index_path + '?');
+							}
 						}
 					}
-					if (Array.isArray(value)) {
-						// todo: check that values are primitives
-						grid = value.reduce(function (a, v) { return a && Array.isArray(v) && v.length === value.length; }, true);
-						if (grid) {
-							questionGetParent()['sc_grid'] = confirm('Format ' + index_path + ' as grid?');
-							questionGetParent()['sc_add'] = confirm('Allow adding more ' + index_path + '?');
-						} else if (!modelActive.sc_grid) {
-							questionGetParent()['sc_add'] = confirm('Allow adding more ' + index_path + '?');
-						}
-					}
-				} else {
-					questionGetParent()['sc_show'] =  false;
 				}
 			}
 		}
 
 		// find all unique props for this level
+		// don't need to ask "show" if object? "Show" is needed, since props in data, but not model need to be asked about
 		if (childrenOf0() && !Array.isArray(value) && typeof value === 'object') {
 			var data_keys = getDataKeys();
 			var model_keys = [];
 
-			var keyStr = prompt('Enter all the available keys for ' + index_path + ' in the order you want them.', data_keys.join(','));
-			if (keyStr) {
-				model_keys = keyStr.split(',');
-				model_keys = model_keys.map(function (key) { return key.trim(); });
-				model_keys = model_keys.reduce(function (a, v) { if (v && a.indexOf(v) === -1) { a.push(v); } return a; }, []);
-				var type;
-				var validTypes = ['text', 'number', 'button', 'radio', 'checkbox'];
-				var new_parent;
-				for (var i = 0; i < model_keys.length; i += 1) {
-					new_parent = questionGetParent();
-					new_parent[model_keys[i]] = {};
-					if (data_keys.indexOf(model_keys[i]) === -1) {
-						type = prompt('Enter the type for ' + model_keys[i] + '. Valid answers: ' + validTypes.join(', '));
-						if (validTypes.indexOf(type) !== -1) {
-							new_parent[model_keys[i]]['sc_type'] = type;
+			if (show) {
+				var keyStr = prompt('Enter all the available keys for ' + index_path + ' in the order you want them.', data_keys.join(','));
+				if (keyStr) {
+					model_keys = keyStr.split(',');
+					model_keys = model_keys.map(function (key) { return key.trim(); });
+					model_keys = model_keys.reduce(function (a, v) { if (v && a.indexOf(v) === -1) { a.push(v); } return a; }, []);
+					var type;
+					var validTypes = ['text', 'number', 'button', 'radio', 'checkbox'];
+					var new_parent;
+					for (var i = 0; i < model_keys.length; i += 1) {
+						new_parent = questionGetParent();
+						new_parent[model_keys[i]] = {};
+						if (data_keys.indexOf(model_keys[i]) === -1) {
+							type = prompt('Enter the type for ' + model_keys[i] + '. Valid answers: ' + validTypes.join(', '));
+							if (validTypes.indexOf(type) !== -1) {
+								new_parent[model_keys[i]]['sc_type'] = type;
+							}
 						}
 					}
 				}
 			}
-			value.sc_keys = interlace(data_keys, model_keys);
+			value.sc_keys = concatUnique(model_keys, data_keys);
 		}
 	}
 
@@ -324,17 +329,13 @@ function create_settings(data, model) {
 		return keys;
 	}
 
-	function interlace(a, b) {
+	function concatUnique(a, b) {
 		if (!a && !b) return [];
 		if (!b) return a;
 		if (!a) return b;
-		var arr = [];
-		for (var i = 0; i < a.length; i += 1) {
-			arr.push(a[i]);
-			if (b[i] && arr.indexOf(b[i]) === -1) arr.push(b[i]);
-		}
-		for (var j = i; j < b.length; j += 1) {
-			if (arr.indexOf(b[j]) === -1) arr.push(b[j]);
+		var arr = a;
+		for (var i = 0; i < b.length; i += 1) {
+			if (arr.indexOf(b[i]) === -1) arr.push(b[i]);
 		}
 		return arr;
 	}
