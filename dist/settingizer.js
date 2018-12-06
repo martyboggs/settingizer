@@ -29,6 +29,7 @@ function create_settings(data, model) {
 
 	var form = document.createElement('form');
 	build_settings();
+	// todo: cache the html
 	el.appendChild(form);
 
 	if (buildModel) {
@@ -42,6 +43,8 @@ function create_settings(data, model) {
 		}
 	}
 
+	return form;
+
 	function traverse() {
 		traverses += 1;
 		if (traverses > 10000) return;
@@ -51,7 +54,10 @@ function create_settings(data, model) {
 		index_path = index.reduce(function (p, c) { return p ? p + '->' + c : c; }, '');
 		index_path = index_path ? '"' + index_path + '"' : 'the root object';
 
-		// check for empty objects and arrays here
+		// check for null, empty objects and arrays here
+
+		if (value === null) value = '';
+
 		if ((Array.isArray(value) && value.length === 0) || (typeof value === 'object' && Object.keys(value).length === 0)) {
 			nextProp();
 			traverse();
@@ -114,7 +120,7 @@ function create_settings(data, model) {
 			}
 			html('<div class="object-group' + sc_hide + '">');
 			var all_keys = getFirstObject().sc_keys;
-			index.push(all_keys[0]);
+			index.push(all_keys ? all_keys[0] : [undefined]);
 			parent = value;
 			value = value[index[index.length - 1]];
 
@@ -156,8 +162,8 @@ function create_settings(data, model) {
 				type = 'color';
 				if (value[0] !== '#') value = '#' + value;
 			}
-			else if (value && !isNaN(Number(value))) type = 'number';
 			else if (value === 'on' || value === 'off' || typeof value === 'boolean') type = 'checkbox';
+			else if (value && !isNaN(Number(value))) type = 'number';
 			else if (value && value.length > 134) type = 'textarea';
 
 			var name = '';
@@ -210,6 +216,7 @@ function create_settings(data, model) {
 
 	function html(str) {
 		htmlStr += str;
+		// todo: this line slows it down a lot, only needed when building model
 		form.innerHTML = htmlStr;
 	}
 
@@ -315,7 +322,7 @@ function create_settings(data, model) {
 	function getDataKeys() {
 		var keys = [];
 		if (Array.isArray(parent)) {
-			arr = parent.reduce(function (a, v) { a.push(Object.keys(v)); return a; }, []);
+			var arr = parent.reduce(function (a, v) { a.push(Object.keys(v)); return a; }, []);
 			for (var i = 0; i < arr.length; i += 1) {
 				for (var j = 0; j < arr[i].length; j += 1) {
 					if (keys.indexOf(arr[i][j]) === -1) {
