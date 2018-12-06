@@ -1,0 +1,53 @@
+.settingizer.shopify-theme {
+}
+
+.settingizer.shopify-theme label.fieldset {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.settingizer.shopify-theme input[type="text"],
+.settingizer.shopify-theme input[type="number"],
+.settingizer.shopify-theme input[type="email"],
+.settingizer.shopify-theme input[type="password"],
+.settingizer.shopify-theme input[type="search"],
+.settingizer.shopify-theme textarea {
+	color: black;
+	padding: 5px 10px;
+	border: 1px solid #c4cdd5;
+	border-radius: 3px;
+	box-shadow: inset 0 1px 0 0 rgba(63,63,68,0.05);
+}
+
+.settingizer.shopify-theme .array-group > * {
+	border: 1px solid #d3dbe2;
+	background: #fafbfc;
+}
+.settingizer.shopify-theme > form > .array-group > .object-group {
+	background: transparent;
+}
+.settingizer.shopify-theme .array-button,
+.settingizer.shopify-theme .grid-buttons {
+	background: transparent;
+	border: 0;
+}
+
+.settingizer.shopify-theme select {
+}
+
+.settingizer.shopify-theme button {
+	border: 1px solid rgb(196, 205, 213);
+	padding: 9px 15px;
+	border-radius: 3px;
+	background-image: linear-gradient(white, rgb(249, 250, 251));
+	color: #212b36;
+}
+
+.settingizer.shopify-theme .sc-submit button {
+	font-size: 16px;
+	background: linear-gradient(to bottom, #6371c7, #5563c1);
+	box-shadow: inset 0 1px 0 0 #6f7bcb;
+	border: 1px solid #3f4eae;
+	line-height: 1.5;
+	color: white;
+}

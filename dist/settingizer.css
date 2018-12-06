@@ -22,6 +22,8 @@
 
 .settingizer input[type="text"],
 .settingizer input[type="number"],
+.settingizer input[type="email"],
+.settingizer input[type="password"],
 .settingizer input[type="search"],
 .settingizer textarea {
 	width: 100%;
@@ -51,6 +53,14 @@
 
 .settingizer button:hover {
 	opacity: 0.8;
+}
+
+.settingizer .sc-submit {
+	padding: 0 10px 10px;
+	text-align: right;
+}
+.settingizer .sc-submit button {
+	font-size: 18px;
 }
 
 .settingizer .sc-hide {
@@ -85,7 +95,7 @@
 .array-button {
 	max-width: 100%;
 	flex: 0 0 100%;
-	border-color: transparent;
+	border: 0;
 }
 
 .grid {
@@ -104,7 +114,7 @@
 
 .fieldset {
 	display: flex;
-	padding: 10px 10px 0 10px;
+	padding: 10px 10px 0;
 }
 .array-group > div.fieldset,
 .object-group > div.fieldset:last-child {
@@ -114,5 +124,5 @@ label.fieldset {
 	padding-bottom: 0;
 }
 .grid-row .fieldset {
-	padding: 0 5px 10px 5px;
+	padding: 0 5px 10px;
 }

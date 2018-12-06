@@ -143,7 +143,7 @@ function create_settings(data, model) {
 
 
 			if (index.length === 1) {
-				if (!buildModel) form.innerHTML = htmlStr;
+				done();
 				return; // kill it
 			}
 			index.pop(); // up a level
@@ -189,9 +189,9 @@ function create_settings(data, model) {
 			} else {
 				html('<div class="fieldset' + sc_hide + '"><label for="' + id + '">' + capitalize(prop) + '</label>');
 				if (type === 'textarea') {
-					html('<div><textarea rows="5" id="' +  id + '" name="' +  name + '"' + (value === 'on' ? ' checked' : '') + '>' + htmlEncode(value) + '</textarea></div>');
+					html('<div><textarea rows="5" id="' +  id + '" data-key="' + prop + '" name="' +  name + '"' + (value === 'on' ? ' checked' : '') + '>' + htmlEncode(value) + '</textarea></div>');
 				} else {
-					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + value + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
+					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + htmlEncode(value) + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
 				}
 				html('</div>'); // close fieldset
 			}
@@ -224,6 +224,10 @@ function create_settings(data, model) {
 		}
 	}
 
+	function done() {
+		if (!buildModel) form.innerHTML = htmlStr + '<div class="sc-submit"><button type="submit">Send</button></div>';
+	}
+
 	function build_settings() {
 		traverse();
 		initEvents();
@@ -236,7 +240,7 @@ function create_settings(data, model) {
 		var description;
 		var prop = index[index.length - 1];
 
-		if (show) { // higher level says show
+		if (show && value !== undefined) { // higher level says show
 			if (prop !== undefined || (prop === undefined && Array.isArray(data))) {
 				if (childrenOf0NoItem()) {
 					show = confirm('Show ' + index_path + '?');
@@ -461,6 +465,6 @@ function create_settings(data, model) {
 	function htmlEncode(str) {
 		var elt = document.createElement('span');
 		elt.textContent = str;
-		return elt.innerHTML;
+		return elt.innerHTML.replace(/"/g, '&quot;');
 	}
 }

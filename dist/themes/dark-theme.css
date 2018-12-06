@@ -1,0 +1,39 @@
+.settingizer.dark-theme {
+	background: rgb(30,30,30);
+	color: #ddd;
+}
+
+.settingizer.dark-theme label.fieldset {
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+}
+
+.settingizer.dark-theme input[type="text"],
+.settingizer.dark-theme input[type="number"],
+.settingizer.dark-theme input[type="email"],
+.settingizer.dark-theme input[type="password"],
+.settingizer.dark-theme input[type="search"],
+.settingizer.dark-theme textarea {
+	background: rgb(41,41,41);
+	border: 2px solid rgb(41,41,41);
+	color: #ddd;
+	padding: 5px 2px;
+}
+
+.settingizer.dark-theme .array-group > * {
+	border: 1px solid rgb(85,85,85);
+}
+.settingizer.dark-theme .array-button,
+.settingizer.dark-theme .grid-buttons {
+	border: 0;
+}
+
+
+.settingizer.dark-theme select {
+	background: rgb(60,60,60);
+}
+
+.settingizer.dark-theme button {
+	background: #1177a8;
+}
