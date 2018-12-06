@@ -270,6 +270,190 @@ var array_test = ['hey', 'hey', {nowwhat: 5, ok: ['heu']}];
 var nested_objects = {ok: {ok2: {ok3: {ok4: 5}}}};
 var array_property = {cows: ['hey', 'hey', 'hey'], chickens: 'WHOA!'};
 
+var sizeChartData = [
+    {
+        "id": "d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb",
+        "products": [],
+        "collections": [
+            {
+                "id": 445221511,
+                "title": "Frontpage"
+            },
+            {
+                "id": 79991701552,
+                "title": "Products"
+            }
+        ],
+        "chart": {
+            "title": "balls",
+            "descriptionTop": "<p>.,m.,mmm,</p>\n<p>&nbsp;</p>\n<p>,m.,m<img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb-AUSTINACTIVE_FINAL_-02copy.png?15795550668089307553\" alt=\"\" width=\"3001\" height=\"664\" /></p>",
+            "descriptionBottom": "<p><img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb-appstore.png?12598548905562463663\" alt=\"\" width=\"300\" height=\"100\" /></p>",
+            "values": [
+                [
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "sdfsdf"
+                ]
+            ],
+            "buttonPlacement": "above-atc"
+        }
+    },
+    {
+        "id": "06ad447f-8639-47cb-b24c-7d1cebc7668b",
+        "products": [],
+        "collections": [],
+        "chart": {
+            "title": "",
+            "descriptionTop": "<p><img style=\"float: right;\" src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-06ad447f-8639-47cb-b24c-7d1cebc7668b-appstore.png?8574385599155832589\" alt=\"\" width=\"300\" height=\"100\" /></p>",
+            "descriptionBottom": "",
+            "values": [
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
+            ],
+            "buttonPlacement": "above-atc"
+        }
+    },
+    {
+        "id": "e47eeaca-5501-4401-9b4f-c9a5903c6dda",
+        "products": [],
+        "collections": [],
+        "chart": {
+            "title": "",
+            "descriptionTop": "<p><img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-e47eeaca-5501-4401-9b4f-c9a5903c6dda-BCP_multipleselection.png?5405499835884832029\" alt=\"\" width=\"1653\" height=\"930\" /></p>",
+            "descriptionBottom": "",
+            "values": [
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
+            ],
+            "buttonPlacement": "above-atc"
+        }
+    }
+];
 
 describe('create_settings(data, config)', function () {
 	it('bcpo_data and {}', function () {
@@ -290,5 +474,8 @@ describe('create_settings(data, config)', function () {
 	});
 	it('array_property and {}', function () {
 		expect(create_settings(array_property, {})).to.be.ok;
+	});
+	it('sizeChartData and {}', function () {
+		expect(create_settings(sizeChartData, {})).to.be.ok;
 	});
 });

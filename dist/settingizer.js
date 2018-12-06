@@ -5,7 +5,8 @@ function create_settings(data, model) {
 		// todo: parse json
 		return console.log('don\'t pass string');
 	}
-	data = Object.assign({}, data);
+	// make copy so we can add sc_keys to it
+	data = Array.isArray(data) ? data.concat() : Object.assign({}, data);
 
 	var htmlStr = '';
 
@@ -167,9 +168,9 @@ function create_settings(data, model) {
 			else if (value && !isNaN(Number(value))) type = 'number';
 			else if (value && value.length > 134) type = 'textarea';
 
-			var name = '';
+			var name = Array.isArray(data) ? 'root' : '';
 			for (var i = 0; i < index.length; i += 1) {
-				if (i === 0) name += index[i];
+				if (i === 0 && !Array.isArray(data)) name += index[i];
 				else name += '[' + index[i] + ']';
 			}
 
@@ -267,6 +268,7 @@ function create_settings(data, model) {
 		// find all unique props for this level
 		// don't need to ask "show" if object? "Show" is needed, since props in data, but not model need to be asked about
 		if (childrenOf0() && !Array.isArray(value) && typeof value === 'object') {
+			// console.log('question', value);
 			var data_keys = getDataKeys();
 			var model_keys = [];
 
