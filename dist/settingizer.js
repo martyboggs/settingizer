@@ -142,6 +142,7 @@ function create_settings(data, model) {
 
 
 			if (index.length === 1) {
+				if (!buildModel) form.innerHTML = htmlStr;
 				return; // kill it
 			}
 			index.pop(); // up a level
@@ -217,7 +218,9 @@ function create_settings(data, model) {
 	function html(str) {
 		htmlStr += str;
 		// todo: this line slows it down a lot, only needed when building model
-		form.innerHTML = htmlStr;
+		if (buildModel) {
+			form.innerHTML = htmlStr;
+		}
 	}
 
 	function build_settings() {
