@@ -18,6 +18,8 @@
 .settingizer label {
 	display: block;
 	min-width: 165px;
+	display: flex;
+	align-items: center;
 }
 
 .settingizer input[type="text"],

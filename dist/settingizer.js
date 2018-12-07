@@ -55,8 +55,6 @@ function create_settings(data, model) {
 		index_path = index.reduce(function (p, c) { return p ? p + '->' + c : c; }, '');
 		index_path = index_path ? '"' + index_path + '"' : 'the root object';
 
-		// check for null, empty objects and arrays here
-
 		if (value === null) value = '';
 
 		if ((Array.isArray(value) && value.length === 0) || (typeof value === 'object' && Object.keys(value).length === 0)) {
@@ -116,8 +114,9 @@ function create_settings(data, model) {
 
 		} else if (typeof value === 'object' && value) { // typof null === 'object' :P
 			// console.log('object');
+			var className = index[index.length - 1] + '-label';
 			if (index[index.length - 1] !== undefined && isNaN(index[index.length - 1])) {
-				html('<label class="fieldset' + sc_hide + '">' + capitalize(index[index.length - 1]) + '</label>');
+				html('<label class="fieldset' + sc_hide + ' ' + className + '">' + capitalize(index[index.length - 1]) + '</label>');
 			}
 			html('<div class="object-group' + sc_hide + '">');
 			var all_keys = getFirstObject().sc_keys;
@@ -175,6 +174,8 @@ function create_settings(data, model) {
 			}
 
 			var prop = index[index.length - 1];
+			var className = prop;
+
 			var id = isNaN(prop) ? prop.toLowerCase() : 'a' + prop;
 			var dupes = getAllIndexes(ids, id);
 			ids.push(id);
@@ -183,11 +184,11 @@ function create_settings(data, model) {
 			var description = modelActive.sc_description ? '<p class="description">' + modelActive.sc_description + '</p>' : '';
 
 			if (gridCheck) {
-				html('<div class="fieldset' + sc_hide + '">');
+				html('<div class="fieldset' + sc_hide + ' ' + className + '">');
 					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + value + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
 				html('</div>'); // close fieldset
 			} else {
-				html('<div class="fieldset' + sc_hide + '"><label for="' + id + '">' + capitalize(prop) + '</label>');
+				html('<div class="fieldset' + sc_hide + ' ' + className + '"><label for="' + id + '">' + capitalize(prop) + '</label>');
 				if (type === 'textarea') {
 					html('<div><textarea rows="5" id="' +  id + '" data-key="' + prop + '" name="' +  name + '"' + (value === 'on' ? ' checked' : '') + '>' + htmlEncode(value) + '</textarea></div>');
 				} else {
@@ -403,10 +404,9 @@ function create_settings(data, model) {
 	function capitalize(string) {
 		// todo: add space if words go from lowercase to uppercase
 		if (typeof string !== 'string') return string;
-		var matches = string.match(/([^\s-_]+)/g);
-		matches = matches.map(function (w) { return w[0].toUpperCase() + w.slice(1).toLowerCase(); });
-		string = matches.join(' ');
-		return string;
+		var mod_string = string.replace(/[-_]|([a-z])([A-Z])/g, '$1 $2');
+		mod_string = mod_string.replace(/^.|\s./g, function (str) { return str.toUpperCase(); });
+		return mod_string;
 	}
 
 	function getAllIndexes(arr, val) {
