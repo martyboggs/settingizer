@@ -204,7 +204,7 @@ function create_settings(data, model) {
 					html(option);
 				} else if (type === 'radios') {
 					option += '<div>';
-					option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '" data-key="' + prop + '" name="' + name +'" value="' + v + '"' + (val === v ? ' checked' : '') + '>'; }, '');
+					option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="radioset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '" data-key="' + prop + '" name="' + name +'" value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
 					option += '</div>';
 					html(option);
 				} else if (type === 'buttons') {
@@ -475,6 +475,8 @@ function create_settings(data, model) {
 				// for
 				prev = els[j].previousSibling;
 				if (prev && prev.tagname === 'LABEL') prev.htmlFor = id;
+				next = els[j].nextSibling;
+				if (next && next.tagname === 'LABEL') next.htmlFor = id;
 				// name - todo: doesn't work
 				els[j].name = els[j].name.replace(/^.+(?:\[(\d+)\])/, function (substring, match, ind, original) {
 					var place = substring.length - match.length - 1;

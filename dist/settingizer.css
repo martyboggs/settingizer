@@ -19,7 +19,6 @@
 	display: block;
 	min-width: 165px;
 	display: flex;
-	align-items: center;
 }
 
 .settingizer input[type="text"],
@@ -119,7 +118,7 @@
 	display: flex;
 	padding: 10px 10px 0;
 }
-.fieldset div {
+.fieldset.type-select div {
 	flex-grow: 1;
 }
 .array-group > div.fieldset,
@@ -135,8 +134,18 @@ label.fieldset {
 .fieldset.type-checkbox {
 	flex-direction: row;
 }
-.fieldset.type-checkbox div {
-	flex-grow: 0;
-	order: -1;
+.fieldset.type-radios {
+	padding: 0;
 }
-
+.fieldset.type-radios > label {
+	padding: 10px 10px 0;
+}
+.fieldset .radioset {
+	display: flex;
+	flex-direction: row;
+	padding: 10px 10px 0;
+}
+.fieldset .radioset label {
+	order: 1;
+	margin-left: 10px;
+}
