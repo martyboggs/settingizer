@@ -47,6 +47,11 @@
 }
 
 .settingizer.shopify-theme select {
+	padding: 5px 10px;
+	background: linear-gradient(to bottom, white, #f9fafb);
+	font-size: 14px;
+	line-height: 20px;
+	box-shadow: 0 1px 0 0 rgba(22,29,37,0.05);
 }
 
 .shopify-theme button { /* must be weak to prevent overriding mce */
@@ -66,7 +71,7 @@
 	color: white;
 }
 
-.settingizer.shopify-theme .fieldset {
+.settingizer.shopify-theme .fieldset:not(.type-checkbox) {
 	flex-direction: column;
 }
 .settingizer.shopify-theme label {

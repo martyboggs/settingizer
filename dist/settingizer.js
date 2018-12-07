@@ -108,7 +108,7 @@ function create_settings(data, model) {
 				html('<label class="fieldset' + sc_hide + '">' + capitalize(index[index.length - 1]) + '</label>');
 			}
 			// if array has as many arrays of the same length
-			if (!gridCheck) {
+			if (gridCheck === 0) {
 				if (modelActive.sc_grid) {
 					gridCheck = value.length;
 					html('<div class="grid array-group' + sc_hide + '">');
@@ -130,7 +130,7 @@ function create_settings(data, model) {
 			}
 			html('<div class="object-group' + sc_hide + '">');
 			var all_keys = getFirstObject().sc_keys;
-			index.push(all_keys ? all_keys[0] : [undefined]);
+			index.push(all_keys ? all_keys[0] : undefined);
 			parent = value;
 			value = value[index[index.length - 1]];
 
@@ -167,44 +167,51 @@ function create_settings(data, model) {
 
 		} else {
 			// console.log('new fieldset');
-			var type = 'text';
-			if (value && value.toString().match(/^#?[a-fA-F0-9]{6}$/)) {
-				type = 'color';
-				if (value[0] !== '#') value = '#' + value;
+			var type = modelActive.sc_type || 'text';
+			if (type === 'text') {
+				if (value && value.toString().match(/^#?[a-fA-F0-9]{6}$/)) {
+					type = 'color';
+					if (value[0] !== '#') value = '#' + value;
+				}
+				else if (value === 'on' || value === 'off' || typeof value === 'boolean') type = 'checkbox';
+				else if (value && !isNaN(Number(value))) type = 'number';
+				else if (value && value.length > 134) type = 'textarea';
 			}
-			else if (value === 'on' || value === 'off' || typeof value === 'boolean') type = 'checkbox';
-			else if (value && !isNaN(Number(value))) type = 'number';
-			else if (value && value.length > 134) type = 'textarea';
 
 			var name = Array.isArray(data) ? 'root' : '';
 			for (var i = 0; i < index.length; i += 1) {
 				if (i === 0 && !Array.isArray(data)) name += index[i];
 				else name += '[' + index[i] + ']';
 			}
-
 			var prop = index[index.length - 1];
-			var className = prop;
-
-			var id = isNaN(prop) ? prop.toLowerCase() : 'a' + prop;
-			var dupes = getAllIndexes(ids, id);
-			ids.push(id);
-			if (dupes > 0) { id += dupes; }
+			var className = prop + ' type-' + type;
+			var id = getId(prop);
+			var val = htmlEncode(value);
 
 			var description = modelActive.sc_description ? '<p class="description">' + modelActive.sc_description + '</p>' : '';
 
-			if (gridCheck) {
-				html('<div class="fieldset' + sc_hide + ' ' + className + '">');
-					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + value + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
-				html('</div>'); // close fieldset
-			} else {
-				html('<div class="fieldset' + sc_hide + ' ' + className + '"><label for="' + id + '">' + capitalize(prop) + '</label>');
+			html('<div class="fieldset' + sc_hide + ' ' + className + '">');
+				// label
+				if (gridCheck === 0) html('<label for="' + id + '">' + capitalize(prop) + '</label>');
+				// option
+				var option = '';
 				if (type === 'textarea') {
-					html('<div><textarea rows="5" id="' +  id + '" data-key="' + prop + '" name="' +  name + '"' + (value === 'on' ? ' checked' : '') + '>' + htmlEncode(value) + '</textarea></div>');
+					html('<div><textarea rows="5" id="' +  id + '" data-key="' + prop + '" name="' +  name + '"' + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea></div>');
+				} else if (type === 'select') {
+					option += '<div><select id="' + id + '" data-key="' + prop + '" name="' + name +'">';
+					option += modelActive.sc_options.reduce(function (a, v) { return a + '<option value="' + v + '"' + (val === v ? ' selected' : '') + '>' + capitalize(v) + '</option>'; }, '');
+					option += '</select></div>';
+					html(option);
+				} else if (type === 'radios') {
+					option += '<div>';
+					option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '" data-key="' + prop + '" name="' + name +'" value="' + v + '"' + (val === v ? ' checked' : '') + '>'; }, '');
+					option += '</div>';
+					html(option);
+				} else if (type === 'buttons') {
 				} else {
-					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + htmlEncode(value) + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
+					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
 				}
-				html('</div>'); // close fieldset
-			}
+			html('</div>'); // close fieldset
 			nextProp();
 		}
 		traverse();
@@ -218,6 +225,8 @@ function create_settings(data, model) {
 			var i = obj.sc_keys.indexOf(index[index.length - 1]);
 			index[index.length - 1] = obj.sc_keys[i + 1];
 		}
+
+		// todo: delete sc_keys if done?
 
 		value = data; // reset value before traversing
 		for (var i = 0; i < index.length; i += 1) {
@@ -369,24 +378,17 @@ function create_settings(data, model) {
 	function checkModel() {
 		modelActive = {};
 		var option = model;
-		var settings = ['sc_add', 'sc_show', 'sc_grid', 'sc_description']; // sc_type sc_options
-
-		for (var j = 0; j < settings.length; j += 1) {
-			if (settings[j] in option) {
-				modelActive[settings[j]] = option[settings[j]];
-			}
-		}
-
-		for (var i = 0; i < index.length; i += 1) {
-			option = option[isNaN(index[i]) ? index[i] : 0];
-			if (option === undefined) break;
-
-			for (var j = 0; j < settings.length; j += 1) {
-				if (settings[j] in modelActive) continue; // already found
-				if (settings[j] in option) {
-					modelActive[settings[j]] = option[settings[j]];
+		var i = 0;
+		var prop;
+		// checks index = [] too
+		for (i = 0; i < index.length + 1; i += 1) {
+			for (prop in option) {
+				if (prop.match(/^sc_/)) {
+					modelActive[prop] = option[prop];
 				}
 			}
+			option = option[isNaN(index[i]) ? index[i] : 0];
+			if (option === undefined) break;
 		}
 	}
 
@@ -427,47 +429,58 @@ function create_settings(data, model) {
 		return indexes;
 	}
 
+	function getId(prop) {
+		var id = isNaN(prop) ? prop.toLowerCase() : 'a' + prop;
+		var dupes = getAllIndexes(ids, id);
+		ids.push(id);
+		if (dupes > 0) { id += dupes; }
+		return id;
+	}
+
 	function initEvents() {
 		el.addEventListener('click', function (e) {
 			// delegate
 			if (e.target.matches('.add-item') || e.target.matches('.add-y')) {
 				// todo: increment index
 				var item = e.target.parentNode.previousSibling.cloneNode(true);
-				fixIds(item);
+				fixAtts(item);
 				e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
 			} else if (e.target.matches('.add-x') || e.target.matches('.add-y')) {
 				if (e.target.matches('.add-x')) {
 					var rows = e.target.parentNode.parentNode.querySelectorAll('.grid-row');
 					for (var i = 0; i < rows.length; i += 1) {
 						item = rows[i].children[rows[i].children.length - 1].cloneNode(true);
-						fixIds(item);
+						fixAtts(item);
 						rows[i].appendChild(item);
 					}
 				} else {
 					var item = e.target.parentNode.previousSibling.cloneNode(true);
-					fixIds(item);
+					fixAtts(item);
 					e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
 				}
 			}
 		});
 	}
 
-	function fixIds(item) {
+	function fixAtts(item) { // updates id, for, name
 		var fieldsets = item.querySelectorAll('div.fieldset');
 		if (item.matches('div.fieldset')) fieldsets = [item];
-		var label, input, prop, dupes;
+		var els, id, prev;
 		for (var i = 0; i < fieldsets.length; i += 1) {
-			label = fieldsets[i].querySelector('label');
-			input = fieldsets[i].querySelector('input');
-
-			prop = input.dataset.key;
-			id = isNaN(prop) ? prop.toLowerCase() : 'a' + prop;
-			dupes = getAllIndexes(ids, id);
-			ids.push(id);
-			if (dupes > 0) { id += dupes; }
-
-			input.id = id;
-			if (label) label.htmlFor = id;
+			els = fieldsets[i].querySelectorAll('input, select');
+			for (var j = 0; j < els.length; j += 1) {
+				// id
+				id = getId(els[j].dataset.key);
+				els[j].id = id;
+				// for
+				prev = els[j].previousSibling;
+				if (prev && prev.tagname === 'LABEL') prev.htmlFor = id;
+				// name - todo: doesn't work
+				els[j].name = els[j].name.replace(/^.+(?:\[(\d+)\])/, function (substring, match, ind, original) {
+					var place = substring.length - match.length - 1;
+					return original.slice(0, place) + (Number(match) + 1) + ']';
+				});
+			}
 		}
 	}
 

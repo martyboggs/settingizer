@@ -21,17 +21,19 @@
 	padding: 5px 2px;
 }
 
+.settingizer.dark-theme select {
+	background: rgb(60,60,60);
+	border: 2px solid rgb(60,60,60);
+	color: #ddd;
+}
+
+
 .settingizer.dark-theme .array-group > * {
 	border: 1px solid rgb(85,85,85);
 }
 .settingizer.dark-theme .array-button,
 .settingizer.dark-theme .grid-buttons {
 	border: 0;
-}
-
-
-.settingizer.dark-theme select {
-	background: rgb(60,60,60);
 }
 
 .settingizer.dark-theme button {

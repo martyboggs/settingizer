@@ -27,7 +27,8 @@
 .settingizer input[type="email"],
 .settingizer input[type="password"],
 .settingizer input[type="search"],
-.settingizer textarea {
+.settingizer textarea,
+.settingizer select {
 	width: 100%;
 	max-width: 180px;
 }
@@ -118,6 +119,9 @@
 	display: flex;
 	padding: 10px 10px 0;
 }
+.fieldset div {
+	flex-grow: 1;
+}
 .array-group > div.fieldset,
 .object-group > div.fieldset:last-child {
 	padding-bottom: 10px;
@@ -128,3 +132,11 @@ label.fieldset {
 .grid-row .fieldset {
 	padding: 0 5px 10px;
 }
+.fieldset.type-checkbox {
+	flex-direction: row;
+}
+.fieldset.type-checkbox div {
+	flex-grow: 0;
+	order: -1;
+}
+

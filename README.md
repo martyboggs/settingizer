@@ -28,9 +28,9 @@ Your config will be generated with these properties.
 | Property | Default | Description | Available |
 | --- | --- | --- | --- |
 | `sc_show` | true | Show/hide some property. | yes |
-| `sc_type` | '' | Choose the type of data. | no |
-| `sc_values` | [] | This is used to list all options, including unselected ones, for dropdowns, buttons, radios, checkboxes etc. | no |
+| `sc_type` | '' | Choose the type of data. | yes |
+| `sc_values` | [] | This is used to list all options, including unselected ones, for dropdowns, buttons, radios, checkboxes etc. | yes |
 | `sc_description` | '' | Description text shows below the value area. | yes |
 | `sc_add` | false | Let users add more array elements. | yes |
 | `sc_grid` | false | If there's an array of arrays with equal length, you can create a grid. | yes |
-| `sc_style` | '' | Choose a custom style for the options. | no |
+| `sc_style` | '' | Choose a custom style for the options. | yes |
