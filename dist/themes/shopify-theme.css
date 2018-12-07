@@ -49,7 +49,7 @@
 .settingizer.shopify-theme select {
 }
 
-.settingizer.shopify-theme button {
+.shopify-theme button { /* must be weak to prevent overriding mce */
 	border: 1px solid rgb(196, 205, 213);
 	padding: 9px 15px;
 	border-radius: 3px;

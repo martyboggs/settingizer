@@ -48,19 +48,30 @@ function create_settings(data, model) {
 
 	function traverse() {
 		traverses += 1;
-		if (traverses > 10000) return;
+		if (traverses > 5000) return;
 		// console.log(traverses);
-		// console.log('index: ', index, 'value: ', value, 'parent: ', parent);
+		// console.log('index: ', index);
+		// console.log('value: ', value);
+		// console.log('parent: ', parent);
 
 		index_path = index.reduce(function (p, c) { return p ? p + '->' + c : c; }, '');
 		index_path = index_path ? '"' + index_path + '"' : 'the root object';
 
 		if (value === null) value = '';
 
-		if ((Array.isArray(value) && value.length === 0) || (typeof value === 'object' && Object.keys(value).length === 0)) {
-			nextProp();
-			traverse();
-			return;
+		// check for empty [] {}
+		if (Array.isArray(value)) {
+			if (value.length === 0) {
+				nextProp();
+				traverse();
+				return;
+			}
+	 	} else if (typeof value === 'object') {
+			if (Object.keys(value).length === 0) {
+				nextProp();
+				traverse();
+				return;
+			}
 		}
 
 		checkModel();
@@ -87,7 +98,6 @@ function create_settings(data, model) {
 					var extra_data = data_keys.reduce(function (a, v) { if (model_keys.indexOf(v) === -1) { a.push(v); } return a; }, []);
 					if (extra_data.length) console.warn('Config is missing ' + extra_data.join(', ') + ' from ' + index_path + '.');
 				}
-				// put in combined
 				value.sc_keys = concatUnique(model_keys, data_keys);
 			}
 		}
@@ -112,7 +122,7 @@ function create_settings(data, model) {
 			parent = value;
 			value = parent[0];
 
-		} else if (typeof value === 'object' && value) { // typof null === 'object' :P
+		} else if (typeof value === 'object' && value) { // typeof null === 'object' :P
 			// console.log('object');
 			var className = index[index.length - 1] + '-label';
 			if (index[index.length - 1] !== undefined && isNaN(index[index.length - 1])) {
@@ -126,8 +136,8 @@ function create_settings(data, model) {
 
 		} else if (typeof value === 'function') {
 
-		} else if (value === undefined) {
-			// console.log('none');
+		} else if (index[index.length - 1] === undefined || (!isNaN(index[index.length - 1]) && index[index.length - 1] === parent.length)) { // reached end of object/array
+			// console.log('end of sc_keys');
 			if (Array.isArray(parent) && modelActive.sc_add && gridCheck === 0) {
 				html('<div class="array-button"><button class="add-item" type="button">Add item</button></div>');
 			}
@@ -139,7 +149,6 @@ function create_settings(data, model) {
 				index.pop();
 			}
 			if (gridCheck > 0) gridCheck--;
-
 
 			if (index.length === 1) {
 				done();
