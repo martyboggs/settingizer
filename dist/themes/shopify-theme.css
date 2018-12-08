@@ -54,7 +54,9 @@
 	box-shadow: 0 1px 0 0 rgba(22,29,37,0.05);
 }
 
-.shopify-theme button { /* must be weak to prevent overriding mce */
+.settingizer.shopify-theme .array-button button,
+.settingizer.shopify-theme .grid-buttons button,
+.settingizer.shopify-theme .sc-submit button {
 	border: 1px solid rgb(196, 205, 213);
 	padding: 9px 15px;
 	border-radius: 3px;

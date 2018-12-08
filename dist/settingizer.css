@@ -44,7 +44,9 @@
 	line-height: 1.7;
 }
 
-.settingizer button {
+.settingizer .array-button button,
+.settingizer .grid-buttons button,
+.settingizer .sc-submit button {
 	background: #1393d1;
 	color: white;
 	border: 0;
@@ -53,7 +55,9 @@
 	align-self: flex-start;
 }
 
-.settingizer button:hover {
+.settingizer .array-button button:hover,
+.settingizer .grid-buttons button:hover,
+.settingizer .sc-submit button:hover {
 	opacity: 0.8;
 }
 

@@ -30,7 +30,7 @@ function create_settings(data, model) {
 
 	var form = document.createElement('form');
 	build_settings();
-	// todo: cache the html
+	fixCss();
 	el.appendChild(form);
 
 	if (buildModel) {
@@ -484,6 +484,19 @@ function create_settings(data, model) {
 				});
 			}
 		}
+	}
+
+	function fixCss() {
+		var groups = form.querySelectorAll('.object-group');
+		var i;
+		groups.forEach(function (group) {
+			for (i = group.childNodes.length - 1; i >= 0; i -= 1) {
+				if (group.childNodes[i].matches('div.fieldset') && !group.children[i].matches('.sc-hide')) {
+					group.childNodes[i].style.paddingBottom = '10px';
+					break;
+				}
+			}
+		});
 	}
 
 	function htmlEncode(str) {
