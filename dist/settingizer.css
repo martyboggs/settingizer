@@ -4,7 +4,6 @@
 	color: #14171a;
 	background: white;
 	margin: 0 auto;
-	padding: 20px;
 }
 
 .settingizer * {
@@ -19,6 +18,10 @@
 	display: block;
 	min-width: 165px;
 	display: flex;
+}
+
+.settingizer a {
+	cursor: pointer;
 }
 
 .settingizer input[type="text"],
@@ -46,19 +49,22 @@
 
 .settingizer .array-button button,
 .settingizer .grid-buttons button,
-.settingizer .sc-submit button {
+.settingizer .sc-submit button,
+.settingizer .sc-btn {
 	background: #1393d1;
 	color: white;
 	border: 0;
 	padding: 6px 10px;
 	cursor: pointer;
 	align-self: flex-start;
+	text-decoration: none;
 }
 
 .settingizer .array-button button:hover,
 .settingizer .grid-buttons button:hover,
-.settingizer .sc-submit button:hover {
-	opacity: 0.8;
+.settingizer .sc-submit button:hover,
+.settingizer .sc-btn:hover {
+		opacity: 0.8;
 }
 
 .settingizer .sc-submit {

@@ -23,14 +23,21 @@ Add a `div` with the `settingzer` class. If no element is found, the settings wi
 
 ## Config Properties
 
-Your config will be generated with these properties.
+Your config will be generated with a schema of your data and the answers to the questions it asks in the following properties: sc_show, sc_type, sc_description, sc_add, sc_grid. The rest of the properties can be added to the config manually.
 
-| Property | Default | Description | Available |
-| --- | --- | --- | --- |
-| `sc_show` | true | Show/hide some property. | yes |
-| `sc_type` | '' | Choose the type of data. | yes |
-| `sc_values` | [] | This is used to list all options, including unselected ones, for dropdowns, buttons, radios, checkboxes etc. | yes |
-| `sc_description` | '' | Description text shows below the value area. | yes |
-| `sc_add` | false | Let users add more array elements. | yes |
-| `sc_grid` | false | If there's an array of arrays with equal length, you can create a grid. | yes |
-| `sc_style` | '' | Choose a custom style for the options. | yes |
+
+| Property | Default | Description |
+| --- | --- | --- |
+| `sc_show` | true | Show/hide some property. |
+| `sc_type` | '' | Choose the type of data. Accepts select, buttons, radios, checkboxes, grid, button. If there's an array of arrays with equal length, you can create a grid. |
+| `sc_options` | [] | This is used to list all options, including unselected ones, for dropdowns, buttons, radios, checkboxes etc. |
+| `sc_description` | '' | Description text shows below the value area. |
+| `sc_add` | false | Let users add more array elements. |
+| `sc_theme` | '' | Only read at the root. Choose a custom style for the options. Accepts: 'shopify' or 'dark' |
+| `sc_readonly` | '' | readonly attribute |
+| `sc_placeholder` | '' | placeholder attribute |
+| `sc_required` | '' | required attribute |
+| `sc_link` | '' | clicking an element will redirect to this url. Use the &ast;&#124;property&#124;&ast; variable to put a value from the parent item into the url, e.g. `{sc_link: '/?id=*|id|*'}`
+| `sc_button_text` | '' | text for button type |
+
+

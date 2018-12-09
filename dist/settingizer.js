@@ -187,30 +187,39 @@ function create_settings(data, model) {
 			var className = prop + ' type-' + type;
 			var id = getId(prop);
 			var val = htmlEncode(value);
-
+			var placeholder = modelActive.sc_placeholder ? ' placeholder="' + modelActive.sc_placeholder + '"' : '';
+			var readonly = modelActive.sc_readonly ? ' readonly' : '';
 			var description = modelActive.sc_description ? '<p class="description">' + modelActive.sc_description + '</p>' : '';
+			var required = modelActive.sc_required ? ' required' : '';
+			var url = modelActive.sc_link ? modelActive.sc_link.replace(/\*\|(\w+)\|\*/g, function (sub, match) { return parent[match] ? parent[match] : ''; }) : '';
+			var open_link = modelActive.sc_link && type !== 'button' ? '<a href="' + url + '">' : '';
+			var close_link = modelActive.sc_link && type !== 'button' ? '</a>' : '';
 
 			html('<div class="fieldset' + sc_hide + ' ' + className + '">');
-				// label
-				if (gridCheck === 0) html('<label for="' + id + '">' + capitalize(prop) + '</label>');
-				// option
+			// label
+			if (gridCheck === 0) html('<label for="' + id + '">' + capitalize(prop) + '</label>');
+			// option
+			html(open_link);
 				var option = '';
 				if (type === 'textarea') {
-					html('<div><textarea rows="5" id="' +  id + '" data-key="' + prop + '" name="' +  name + '"' + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea></div>');
+					html('<div><textarea rows="5" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + placeholder + readonly + required + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea></div>');
 				} else if (type === 'select') {
-					option += '<div><select id="' + id + '" data-key="' + prop + '" name="' + name +'">';
+					option += '<div><select id="' + id + '" data-key="' + prop + '" name="' + name + '"' + required +'>';
 					option += modelActive.sc_options.reduce(function (a, v) { return a + '<option value="' + v + '"' + (val === v ? ' selected' : '') + '>' + capitalize(v) + '</option>'; }, '');
 					option += '</select></div>';
 					html(option);
 				} else if (type === 'radios') {
 					option += '<div>';
-					option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="radioset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '" data-key="' + prop + '" name="' + name +'" value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
+					option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="radioset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + required + ' value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
 					option += '</div>';
 					html(option);
 				} else if (type === 'buttons') {
+				} else if (type === 'button') {
+					html('<div><a class="sc-btn" href="' + url + '">' + modelActive.sc_button_text + '</a></div>');
 				} else {
-					html('<div><input type="' + type + '" id="' +  id + '" data-key="' + prop + '" name="' +  name + '" value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
+					html('<div><input type="' + type + '" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + placeholder + readonly + required + ' value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
 				}
+				html(close_link);
 			html('</div>'); // close fieldset
 			nextProp();
 		}
@@ -277,8 +286,9 @@ function create_settings(data, model) {
 							// todo: check that values are primitives
 							grid = value.reduce(function (a, v) { return a && Array.isArray(v) && v.length === value.length; }, true);
 							if (grid) {
-								questionGetParent()['sc_grid'] = confirm('Format ' + index_path + ' as grid?');
-								questionGetParent()['sc_add'] = confirm('Allow adding more ' + index_path + '?');
+								var active = questionGetParent();
+								active['sc_type'] = confirm('Format ' + index_path + ' as grid?') ? 'grid' : '';
+								active['sc_add'] = confirm('Allow adding more ' + index_path + '?');
 							} else if (!modelActive.sc_grid) {
 								questionGetParent()['sc_add'] = confirm('Allow adding more ' + index_path + '?');
 							}
@@ -297,12 +307,13 @@ function create_settings(data, model) {
 
 			if (show) {
 				var keyStr = prompt('Enter all the available keys for ' + index_path + ' in the order you want them.', data_keys.join(','));
+				// todo: support hiding keys if they are removed from this list
 				if (keyStr) {
 					model_keys = keyStr.split(',');
 					model_keys = model_keys.map(function (key) { return key.trim(); });
 					model_keys = model_keys.reduce(function (a, v) { if (v && a.indexOf(v) === -1) { a.push(v); } return a; }, []);
 					var type;
-					var validTypes = ['text', 'number', 'button', 'radio', 'checkbox'];
+					var validTypes = ['text', 'number', 'buttons', 'radio', 'checkbox', 'button'];
 					var new_parent;
 					for (var i = 0; i < model_keys.length; i += 1) {
 						new_parent = questionGetParent();
@@ -442,6 +453,7 @@ function create_settings(data, model) {
 			// delegate
 			if (e.target.matches('.add-item') || e.target.matches('.add-y')) {
 				// todo: increment index
+				// todo: clear values
 				var item = e.target.parentNode.previousSibling.cloneNode(true);
 				fixAtts(item);
 				e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
