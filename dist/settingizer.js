@@ -392,13 +392,17 @@ function create_settings(data, model) {
 	function checkModel() {
 		modelActive = {};
 		var option = model;
-		var i = 0;
+		var i;
 		var prop;
 		// checks index = [] too
 		for (i = 0; i < index.length + 1; i += 1) {
 			for (prop in option) {
-				if (prop.match(/^sc_/) && ['sc_label'].indexOf(prop) === -1) {
-					modelActive[prop] = option[prop];
+				if (prop.match(/^sc_/)) {
+					// for some props, just look at the last one
+					if (prop === 'sc_label') console.log(prop, i, index.length);
+					if (['sc_label'].indexOf(prop) === -1 || i === index.length) {
+						modelActive[prop] = option[prop];
+					}
 				}
 			}
 			option = option[isNaN(index[i]) ? index[i] : 0];

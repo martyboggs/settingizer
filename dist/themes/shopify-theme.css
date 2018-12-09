@@ -21,6 +21,12 @@
 	line-height: 24px;
 }
 
+.settingizer.shopify-theme input[readonly], .settingizer input[disabled] {
+	background: #f4f6f8;
+	color: #919eab;
+	border-color: #c4cdd5;
+}
+
 .settingizer.shopify-theme input[type="text"],
 .settingizer.shopify-theme input[type="number"],
 .settingizer.shopify-theme input[type="email"],
