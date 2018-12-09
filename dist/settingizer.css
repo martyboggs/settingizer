@@ -21,7 +21,15 @@
 }
 
 .settingizer a {
+	display: inline-block;
+}
+
+.settingizer a,
+.settingizer a * {
 	cursor: pointer;
+}
+.settingizer a:not(.sc-btn):hover {
+	opacity: 0.5;
 }
 
 .settingizer input[type="text"],

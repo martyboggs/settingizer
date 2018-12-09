@@ -28,16 +28,16 @@ Your config will be generated with a schema of your data and the answers to the 
 
 | Property | Default | Description |
 | --- | --- | --- |
-| `sc_show` | true | Show/hide some property. |
-| `sc_type` | '' | Choose the type of data. Accepts select, buttons, radios, checkboxes, grid, button. If there's an array of arrays with equal length, you can create a grid. |
-| `sc_options` | [] | This is used to list all options, including unselected ones, for dropdowns, buttons, radios, checkboxes etc. |
-| `sc_description` | '' | Description text shows below the value area. |
-| `sc_add` | false | Let users add more array elements. |
-| `sc_theme` | '' | Only read at the root. Choose a custom style for the options. Accepts: 'shopify' or 'dark' |
-| `sc_readonly` | '' | readonly attribute |
-| `sc_placeholder` | '' | placeholder attribute |
-| `sc_required` | '' | required attribute |
-| `sc_link` | '' | clicking an element will redirect to this url. Use the &ast;&#124;property&#124;&ast; variable to put a value from the parent item into the url, e.g. `{sc_link: '/?id=*|id|*'}`
-| `sc_button_text` | '' | text for button type |
-
+| sc_show | true | Show/hide some property. |
+| sc_type | '' | Choose the type of data. Accepts select, buttons, radios, checkboxes, grid, button. If there's an array of arrays with equal length, you can create a grid. |
+| sc_options | [] | This is used to list all options, including unselected ones, for dropdowns, buttons, radios, checkboxes etc. |
+| sc_description | '' | Description text shows below the value area. |
+| sc_add | false | Let users add more array elements. |
+| sc_theme | '' | Only read at the root. Choose a custom style for the options. Accepts: 'shopify' or 'dark' |
+| sc_readonly | '' | readonly attribute |
+| sc_placeholder | '' | placeholder attribute |
+| sc_required | '' | required attribute |
+| sc_link | '' | clicking an element will redirect to this url. Use the &ast;&#124;property&#124;&ast; variable to put a value from the parent item into the url, e.g. `{sc_link: '/?id=*|id|*'}`
+| sc_button_text | '' | text for button type |
+| sc_label | 'Capitalized Property' | Custom text for label. Set to false to hide the label. |
 

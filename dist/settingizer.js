@@ -27,6 +27,7 @@ function create_settings(data, model) {
 	el = document.getElementsByClassName('settingizer')[0];
 	if (!el) el = document.body;
 	if (!el) return console.warn('Settingizer: Run create_settings() in body or add <div class="settingizer"></div>');
+	el.className += model.sc_theme ? ' ' + model.sc_theme + '-theme' : '';
 
 	var form = document.createElement('form');
 	build_settings();
@@ -197,7 +198,7 @@ function create_settings(data, model) {
 
 			html('<div class="fieldset' + sc_hide + ' ' + className + '">');
 			// label
-			if (gridCheck === 0) html('<label for="' + id + '">' + capitalize(prop) + '</label>');
+			if (gridCheck === 0 && modelActive.sc_label !== false) html('<label for="' + id + '">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
 			// option
 			html(open_link);
 				var option = '';
