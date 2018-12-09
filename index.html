@@ -17,7 +17,7 @@
 
 	.settingizer {
 		max-width: 786px;
-		padding: 20px;
+		padding: 30px;
 	}
 	</style>
 </head>
@@ -496,13 +496,13 @@ var newSizeChartData = [{"id":"d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb","title":"ba
 			"sc_show": false,
 		},
 		"title": {sc_readonly: true, sc_placeholder: 'title', sc_required: true},
-		"descriptionTop": {sc_link: '/hey?title=*|title|*'},
+		"descriptionTop": {sc_type: 'textarea', sc_link: '/hey?title=*|title|*'},
 		cats: {sc_type: 'button', sc_link: '/hey?title=*|title|*', sc_button_text: 'Go!!!', sc_label: 'dogs'},
 		"values": {
 			"sc_grid": true,
 			"sc_add": true
 		},
-		"descriptionBottom": {},
+		"descriptionBottom": {sc_type: 'textarea'},
 		"buttonPlacement": {},
 		"conditionsOperator": {sc_type: 'radios', sc_options: ['any-conditions', 'all-conditions']},
 		"conditions": {

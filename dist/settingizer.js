@@ -78,29 +78,10 @@ function create_settings(data, model) {
 		checkModel();
 		if (buildModel) {
 			questions();
+		} else {
+			warning();
 		}
-		checkModel(); // if questions can checkModel too, this can be removed
-
-		if (!buildModel) {
-			if (childrenOf0() && !Array.isArray(value) && typeof value === 'object') {
-				var data_keys = getDataKeys();
-				var model_value = model;
-				for (var i = 0; i < index.length; i += 1) {
-					if (model_value) {
-						model_value = model_value[index[i]];
-					} else {
-						console.warn('Config is missing all the keys for ' + index_path);
-						break;
-					}
-				}
-				if (model_value) {
-					var model_keys = Object.keys(model_value);
-					var extra_data = data_keys.reduce(function (a, v) { if (model_keys.indexOf(v) === -1) { a.push(v); } return a; }, []);
-					if (extra_data.length) console.warn('Config is missing ' + extra_data.join(', ') + ' from ' + index_path + '.');
-				}
-				value.sc_keys = concatUnique(model_keys, data_keys);
-			}
-		}
+		checkModel(); // todo: if questions can checkModel too, this can be removed
 
 		var sc_hide = modelActive.sc_show === false ? ' sc-hide' : '';
 		var prop = index[index.length - 1];
@@ -142,12 +123,12 @@ function create_settings(data, model) {
 		} else if (index[index.length - 1] === undefined || (!isNaN(index[index.length - 1]) && index[index.length - 1] === parent.length)) { // reached end of object/array
 			// console.log('end of sc_keys');
 			if (Array.isArray(parent) && modelActive.sc_add && gridCheck === 0) {
-				html('<div class="array-button"><button class="add-item" type="button">Add item</button></div>');
+				html('<div class="array-button"><button class="add-item sc-btn" type="button">Add item</button></div>');
 			}
 			html('</div>');
 
 			if (gridCheck === 1) {
-				html('<div class="grid-buttons"><button class="add-x" type="button">Add X</button><button class="add-y" type="button">Add Y</button></div>');
+				html('<div class="grid-buttons"><button class="add-x sc-btn" type="button">Add X</button><button class="add-y sc-btn" type="button">Add Y</button></div>');
 				html('</div>');
 				index.pop();
 			}
@@ -199,29 +180,29 @@ function create_settings(data, model) {
 			var close_link = modelActive.sc_link && type !== 'button' ? '</a>' : '';
 
 			html('<div class="fieldset' + sc_hide + ' ' + className + '">');
-			// label
-			if (gridCheck === 0 && modelActive.sc_label !== false) html('<label for="' + id + '">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
-			// option
-			html(open_link);
-				var option = '';
-				if (type === 'textarea') {
-					html('<div><textarea rows="5" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + placeholder + readonly + required + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea></div>');
-				} else if (type === 'select') {
-					option += '<div><select id="' + id + '" data-key="' + prop + '" name="' + name + '"' + required +'>';
-					option += modelActive.sc_options.reduce(function (a, v) { return a + '<option value="' + v + '"' + (val === v ? ' selected' : '') + '>' + capitalize(v) + '</option>'; }, '');
-					option += '</select></div>';
-					html(option);
-				} else if (type === 'radios') {
-					option += '<div>';
-					option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="radioset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + required + ' value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
-					option += '</div>';
-					html(option);
-				} else if (type === 'buttons') {
-				} else if (type === 'button') {
-					html('<div><a class="sc-btn" href="' + url + '">' + modelActive.sc_button_text + '</a></div>');
-				} else {
-					html('<div><input type="' + type + '" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + placeholder + readonly + required + ' value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
-				}
+				// label
+				if (gridCheck === 0 && modelActive.sc_label !== false) html('<label for="' + id + '">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
+				// option
+				html(open_link);
+					var option = '';
+					if (type === 'textarea') {
+						html('<div><textarea rows="5" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + placeholder + readonly + required + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea></div>');
+					} else if (type === 'select') {
+						option += '<div><select id="' + id + '" data-key="' + prop + '" name="' + name + '"' + required +'>';
+						option += modelActive.sc_options.reduce(function (a, v) { return a + '<option value="' + v + '"' + (val === v ? ' selected' : '') + '>' + capitalize(v) + '</option>'; }, '');
+						option += '</select></div>';
+						html(option);
+					} else if (type === 'radios') {
+						option += '<div>';
+						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="radioset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + required + ' value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
+						option += '</div>';
+						html(option);
+					} else if (type === 'buttons') {
+					} else if (type === 'button') {
+						html('<div><a class="sc-btn" href="' + url + '">' + modelActive.sc_button_text + '</a></div>');
+					} else {
+						html('<div><input type="' + type + '" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + placeholder + readonly + required + ' value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
+					}
 				html(close_link);
 			html('</div>'); // close fieldset
 			nextProp();
@@ -256,7 +237,7 @@ function create_settings(data, model) {
 	}
 
 	function done() {
-		if (!buildModel) form.innerHTML = htmlStr + '<div class="sc-submit"><button type="submit">Send</button></div>';
+		if (!buildModel) form.innerHTML = htmlStr + '<div class="sc-submit"><button type="submit" class="sc-btn-primary">Send</button></div>';
 	}
 
 	function build_settings() {
@@ -329,6 +310,27 @@ function create_settings(data, model) {
 						}
 					}
 				}
+			}
+			value.sc_keys = concatUnique(model_keys, data_keys);
+		}
+	}
+
+	function warning() {
+		if (childrenOf0() && !Array.isArray(value) && typeof value === 'object') {
+			var data_keys = getDataKeys();
+			var model_value = model;
+			for (var i = 0; i < index.length; i += 1) {
+				if (model_value) {
+					model_value = model_value[index[i]];
+				} else {
+					console.warn('Config is missing all the keys for ' + index_path);
+					break;
+				}
+			}
+			if (model_value) {
+				var model_keys = Object.keys(model_value);
+				var extra_data = data_keys.reduce(function (a, v) { if (model_keys.indexOf(v) === -1) { a.push(v); } return a; }, []);
+				if (extra_data.length) console.warn('Config is missing ' + extra_data.join(', ') + ' from ' + index_path + '.');
 			}
 			value.sc_keys = concatUnique(model_keys, data_keys);
 		}

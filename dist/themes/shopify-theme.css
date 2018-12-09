@@ -60,23 +60,21 @@
 	box-shadow: 0 1px 0 0 rgba(22,29,37,0.05);
 }
 
-.settingizer.shopify-theme .array-button button,
-.settingizer.shopify-theme .grid-buttons button,
-.settingizer.shopify-theme .sc-submit button {
+.settingizer.shopify-theme .sc-btn,
+.settingizer.shopify-theme .sc-btn-primary {
 	border: 1px solid rgb(196, 205, 213);
-	padding: 9px 15px;
+	padding: 9px 16px;
 	border-radius: 3px;
 	background-image: linear-gradient(white, rgb(249, 250, 251));
 	color: #212b36;
 }
 
-.settingizer.shopify-theme .sc-submit button {
-	font-size: 16px;
+.settingizer.shopify-theme .sc-btn-primary {
 	background: linear-gradient(to bottom, #6371c7, #5563c1);
 	box-shadow: inset 0 1px 0 0 #6f7bcb;
 	border: 1px solid #3f4eae;
-	line-height: 1.5;
 	color: white;
+	font-weight: 600;
 }
 
 .settingizer.shopify-theme .fieldset:not(.type-checkbox) {

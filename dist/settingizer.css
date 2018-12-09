@@ -10,6 +10,10 @@
 	box-sizing: border-box;
 }
 
+.settingizer > form {
+	margin: -10px;
+}
+
 .settingizer p {
 	margin: 0 0 10px 0;
 }
@@ -52,7 +56,7 @@
 .settingizer input[disabled] {
 	background: #f4f6f8;
 	color: #919eab;
-	border-color: #c4cdd5;
+	border: 1px solid #c4cdd5;
 }
 
 .settingizer .description {
@@ -62,10 +66,11 @@
 	line-height: 1.7;
 }
 
-.settingizer .array-button button,
-.settingizer .grid-buttons button,
-.settingizer .sc-submit button,
-.settingizer .sc-btn {
+.settingizer .sc-btn,
+.settingizer .sc-btn-primary {
+	font-family: "Segoe UI", Helvetica, sans-serif;
+	font-size: 14px;
+	line-height: 16px;
 	background: #1393d1;
 	color: white;
 	border: 0;
@@ -75,19 +80,14 @@
 	text-decoration: none;
 }
 
-.settingizer .array-button button:hover,
-.settingizer .grid-buttons button:hover,
-.settingizer .sc-submit button:hover,
-.settingizer .sc-btn:hover {
-		opacity: 0.8;
+.settingizer .sc-btn:hover,
+.settingizer .sc-btn-primary:hover {
+	opacity: 0.8;
 }
 
 .settingizer .sc-submit {
 	padding: 0 10px 10px;
 	text-align: right;
-}
-.settingizer .sc-submit button {
-	font-size: 18px;
 }
 
 .settingizer .sc-hide {
@@ -127,6 +127,7 @@
 
 .grid {
 	flex-direction: column;
+	align-self: flex-start;
 }
 .grid-row {
 	display: flex;
