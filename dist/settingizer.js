@@ -80,7 +80,6 @@ function create_settings(data, model) {
 			questions();
 		}
 		checkModel(); // if questions can checkModel too, this can be removed
-		var sc_hide = modelActive.sc_show === false ? ' sc-hide' : '';
 
 		if (!buildModel) {
 			if (childrenOf0() && !Array.isArray(value) && typeof value === 'object') {
@@ -103,18 +102,22 @@ function create_settings(data, model) {
 			}
 		}
 
+		var sc_hide = modelActive.sc_show === false ? ' sc-hide' : '';
+		var prop = index[index.length - 1];
+
 		if (Array.isArray(value)) {
 			// console.log('array');
-			if (index[index.length - 1] !== undefined && isNaN(index[index.length - 1])) {
-				html('<label class="fieldset' + sc_hide + '">' + capitalize(index[index.length - 1]) + '</label>');
+			var prop = index[index.length - 1];
+			if (prop !== undefined && isNaN(prop) && modelActive.sc_label !== false) {
+				html('<label class="fieldset' + sc_hide + ' ' + prop + '-label">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
 			}
 			// if array has as many arrays of the same length
 			if (gridCheck === 0) {
 				if (modelActive.sc_grid) {
 					gridCheck = value.length;
-					html('<div class="grid array-group' + sc_hide + '">');
+					html('<div class="grid array-group' + sc_hide + ' ' + prop + '-group">');
 				} else {
-					html('<div class="array-group' + sc_hide + '">');
+					html('<div class="array-group' + sc_hide + ' ' + prop + '-group">');
 				}
 			} else {
 				html('<div class="grid-row' + sc_hide + '">');
@@ -125,11 +128,10 @@ function create_settings(data, model) {
 
 		} else if (typeof value === 'object' && value) { // typeof null === 'object' :P
 			// console.log('object');
-			var className = index[index.length - 1] + '-label';
-			if (index[index.length - 1] !== undefined && isNaN(index[index.length - 1])) {
-				html('<label class="fieldset' + sc_hide + ' ' + className + '">' + capitalize(index[index.length - 1]) + '</label>');
+			if (prop !== undefined && isNaN(prop) && modelActive.sc_label !== false) {
+				html('<label class="fieldset' + sc_hide + ' ' + prop + '-label">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
 			}
-			html('<div class="object-group' + sc_hide + '">');
+			html('<div class="object-group' + sc_hide + ' ' + prop + '-group">');
 			var all_keys = getFirstObject().sc_keys;
 			index.push(all_keys ? all_keys[0] : undefined);
 			parent = value;
@@ -395,7 +397,7 @@ function create_settings(data, model) {
 		// checks index = [] too
 		for (i = 0; i < index.length + 1; i += 1) {
 			for (prop in option) {
-				if (prop.match(/^sc_/)) {
+				if (prop.match(/^sc_/) && ['sc_label'].indexOf(prop) === -1) {
 					modelActive[prop] = option[prop];
 				}
 			}

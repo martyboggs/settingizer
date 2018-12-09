@@ -48,6 +48,13 @@
 	margin-left: 0;
 }
 
+.settingizer input[readonly],
+.settingizer input[disabled] {
+	background: #f4f6f8;
+	color: #919eab;
+	border-color: #c4cdd5;
+}
+
 .settingizer .description {
 	font-size: 12px;
 	color: #657786;

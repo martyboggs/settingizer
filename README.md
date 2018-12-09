@@ -33,7 +33,7 @@ Your config will be generated with a schema of your data and the answers to the 
 | sc_options | [] | This is used to list all options, including unselected ones, for dropdowns, buttons, radios, checkboxes etc. |
 | sc_description | '' | Description text shows below the value area. |
 | sc_add | false | Let users add more array elements. |
-| sc_theme | '' | Only read at the root. Choose a custom style for the options. Accepts: 'shopify' or 'dark' |
+| sc_theme | '' | Only to be used at the root. Choose a custom style for the options. Accepts: 'shopify' or 'dark' |
 | sc_readonly | '' | readonly attribute |
 | sc_placeholder | '' | placeholder attribute |
 | sc_required | '' | required attribute |
