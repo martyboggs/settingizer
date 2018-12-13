@@ -8,6 +8,11 @@ function create_settings(data, model) {
 	// make copy so we can add sc_keys to it
 	data = Array.isArray(data) ? data.concat() : Object.assign({}, data);
 
+	// todo: reorder
+	// todo: simple array delete button
+	// todo: name
+	// todo: warning shows for children of sc_show: false
+
 	var htmlStr = '';
 
 	var index = [];
@@ -16,7 +21,7 @@ function create_settings(data, model) {
 	var buildModel = !model;
 	var model = model || {};
 	var modelActive = {};
-	var ids = [];
+	var ids = ['array', 'object', 'grid', 'grid-row', 'sc-btn'];
 	var descriptions = {};
 	var gridCheck = 0;
 	var index_path;
@@ -113,6 +118,10 @@ function create_settings(data, model) {
 				html('<label class="fieldset' + sc_hide + ' ' + prop + '-label">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
 			}
 			html('<div class="object-group' + sc_hide + ' ' + prop + '-group">');
+			if (Array.isArray(parent) && modelActive.sc_add) {
+				html('<button type="button" class="delete-item">x</button>');
+			}
+
 			var all_keys = getFirstObject().sc_keys;
 			index.push(all_keys ? all_keys[0] : undefined);
 			parent = value;
@@ -237,7 +246,7 @@ function create_settings(data, model) {
 	}
 
 	function done() {
-		if (!buildModel) form.innerHTML = htmlStr + '<div class="sc-submit"><button type="submit" class="sc-btn-primary">Send</button></div>';
+		if (!buildModel) form.innerHTML = htmlStr + '<div class="sc-submit"><button type="submit" class="sc-btn-primary">Save</button></div>';
 	}
 
 	function build_settings() {
@@ -462,9 +471,18 @@ function create_settings(data, model) {
 			if (e.target.matches('.add-item') || e.target.matches('.add-y')) {
 				// todo: increment index
 				// todo: clear values
-				var item = e.target.parentNode.previousSibling.cloneNode(true);
-				fixAtts(item);
-				e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
+				var arr = e.target.parentNode.parentNode;
+				if (arr.childNodes.length === 2 && e.target.parentNode.previousSibling.style.display === 'none') {
+					e.target.parentNode.previousSibling.style.display = '';
+				} else {
+					var item = e.target.parentNode.previousSibling.cloneNode(true);
+					fixAtts(item);
+					arr.insertBefore(item, e.target.parentNode);
+				}
+			} else if (e.target.matches('.delete-item')) {
+				// if only 1, hide it and disable the fields
+				var arr = e.target.parentNode.parentNode;
+				arr.childNodes.length > 2 ? arr.removeChild(e.target.parentNode) : e.target.parentNode.style.display = 'none';
 			} else if (e.target.matches('.add-x') || e.target.matches('.add-y')) {
 				if (e.target.matches('.add-x')) {
 					var rows = e.target.parentNode.parentNode.querySelectorAll('.grid-row');

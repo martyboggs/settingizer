@@ -85,6 +85,19 @@
 	opacity: 0.8;
 }
 
+.settingizer .delete-item {
+	align-self: flex-end;
+	border: 0;
+	width: 21px;
+	text-align: center;
+	padding: 0;
+	margin: -1px;
+	cursor: pointer;
+	background: #fe7c7c;
+	height: 21px;
+	color: white;
+}
+
 .settingizer .sc-submit {
 	padding: 0 10px 10px;
 	text-align: right;
