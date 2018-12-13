@@ -12,6 +12,7 @@ function create_settings(data, model) {
 	// todo: simple array delete button
 	// todo: name
 	// todo: warning shows for children of sc_show: false
+	// todo: classname undefined
 
 	var htmlStr = '';
 
@@ -469,35 +470,118 @@ function create_settings(data, model) {
 		el.addEventListener('click', function (e) {
 			// delegate
 			if (e.target.matches('.add-item') || e.target.matches('.add-y')) {
-				// todo: increment index
-				// todo: clear values
-				var arr = e.target.parentNode.parentNode;
-				if (arr.childNodes.length === 2 && e.target.parentNode.previousSibling.style.display === 'none') {
-					e.target.parentNode.previousSibling.style.display = '';
+				var par = getClosest('.array-group', e.target);
+				var items = par[0].childNodes;
+				items = [].slice.call(items, 0, -1); // remove last
+				var lastItem = items[items.length - 1];
+				if (items.length === 1 && lastItem.style.display === 'none') {
+					lastItem.style.display = '';
+					disableNameEls(lastItem, false);
 				} else {
-					var item = e.target.parentNode.previousSibling.cloneNode(true);
+					var item = lastItem.cloneNode(true);
 					fixAtts(item);
-					arr.insertBefore(item, e.target.parentNode);
+					clearValues(item);
+					par[0].insertBefore(item, lastItem.nextSibling);
 				}
 			} else if (e.target.matches('.delete-item')) {
 				// if only 1, hide it and disable the fields
-				var arr = e.target.parentNode.parentNode;
-				arr.childNodes.length > 2 ? arr.removeChild(e.target.parentNode) : e.target.parentNode.style.display = 'none';
+				var par = getClosest('.array-group', e.target);
+				var items = par[0].childNodes;
+				items = [].slice.call(items, 0, -1); // remove last
+				if (items.length > 1) {
+					// todo: fixatts for all items
+					par[0].removeChild(par[1]);
+				} else {
+					par[1].style.display = 'none';
+					disableNameEls(par[1], true);
+				}
 			} else if (e.target.matches('.add-x') || e.target.matches('.add-y')) {
+				var par = getClosest('.array-group', e.target);
+				var items = par[0].childNodes;
+				items = [].slice.call(items, 0, -1); // remove last
+				var lastItem = items[items.length - 1];
 				if (e.target.matches('.add-x')) {
-					var rows = e.target.parentNode.parentNode.querySelectorAll('.grid-row');
+					var rows = par[0].querySelectorAll('.grid-row');
 					for (var i = 0; i < rows.length; i += 1) {
-						item = rows[i].children[rows[i].children.length - 1].cloneNode(true);
+						item = rows[i].childNodes[rows[i].childNodes.length - 1].cloneNode(true);
 						fixAtts(item);
+						clearValues(item);
 						rows[i].appendChild(item);
 					}
 				} else {
-					var item = e.target.parentNode.previousSibling.cloneNode(true);
+					var item = lastItem.cloneNode(true);
 					fixAtts(item);
-					e.target.parentNode.parentNode.insertBefore(item, e.target.parentNode);
+					clearValues(item);
+					par[0].insertBefore(item, lastItem.nextSibling);
 				}
 			}
 		});
+		el.addEventListener('mousedown', function (e) {
+			var par = getClosest('.array-group', e.target);
+			if (par) {
+				par[1].onDragStart = function () {
+					return false;
+				}
+				// draggable(par[1]);
+			}
+		});
+
+		function disableNameEls(el, bool) {
+			var fields = el.querySelectorAll('[name]');
+			if (fields.length === 0 && el.name) {
+				fields = [el];
+			}
+			fields.forEach(function (field) { field.disabled = bool; });
+		}
+
+		function draggable(el) {
+			el.style.position = 'absolute';
+			el.style.zIndex = 1000;
+
+			// document.body.append(el);
+
+			moveAt(event.pageX, event.pageY);
+
+			function moveAt(pageX, pageY) {
+				el.style.left = pageX - el.offsetWidth / 2 + 'px';
+				el.style.top = pageY - el.offsetHeight / 2 + 'px';
+			}
+
+			function onMouseMove(event) {
+				moveAt(event.pageX, event.pageY);
+			}
+
+			document.addEventListener('mousemove', onMouseMove);
+
+			el.onmouseup = function() {
+				document.removeEventListener('mousemove', onMouseMove);
+				el.onmouseup = null;
+			};
+		}
+	}
+
+	function getClosest(search, target) {
+		var el = target;
+		var lastEl;
+		var type = search[0];
+		var att;
+		if (type === '.') {
+			att = 'className';
+			search = search.slice(1);
+		} else if (type === '#') {
+			att = 'id';
+			search = search.slice(1);
+		} else {
+			att = 'tagName';
+		}
+		while (el && el.tagname !== 'HTML') {
+			lastEl = el;
+			el = el.parentNode;
+			if (el && el[att] && el[att].indexOf(search) !== -1) {
+				return [el, lastEl];
+			}
+		}
+		return false;
 	}
 
 	function fixAtts(item) { // updates id, for, name
@@ -524,12 +608,16 @@ function create_settings(data, model) {
 		}
 	}
 
+	function clearValues(item) {
+		// todo:
+	}
+
 	function fixCss() {
 		var groups = form.querySelectorAll('.object-group');
 		var i;
 		groups.forEach(function (group) {
 			for (i = group.childNodes.length - 1; i >= 0; i -= 1) {
-				if (group.childNodes[i].matches('div.fieldset') && !group.children[i].matches('.sc-hide')) {
+				if (group.childNodes[i].matches('div.fieldset') && !group.childNodes[i].matches('.sc-hide')) {
 					group.childNodes[i].style.paddingBottom = '10px';
 					break;
 				}

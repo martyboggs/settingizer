@@ -47,6 +47,10 @@
 	max-width: 180px;
 }
 
+.settingizer textarea {
+	max-width: none;
+}
+
 .settingizer input[type="checkbox"],
 .settingizer input[type="radio"] {
 	margin-left: 0;
@@ -85,6 +89,17 @@
 	opacity: 0.8;
 }
 
+.settingizer button,
+.settingizer .sc-btn,
+.settingizer .sc-btn-primary {
+	user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-webkit-touch-callout: none;
+	-o-user-select: none;
+	-moz-user-select: none;
+}
+
 .settingizer .delete-item {
 	align-self: flex-end;
 	border: 0;
@@ -93,8 +108,10 @@
 	padding: 0;
 	margin: -1px;
 	cursor: pointer;
-	background: #fe7c7c;
 	height: 21px;
+}
+.settingizer .delete-item:hover {
+	background: #fe7c7c;
 	color: white;
 }
 
@@ -153,6 +170,7 @@
 	margin-right: 10px;
 }
 
+/* fieldset */
 .fieldset {
 	display: flex;
 	padding: 10px 10px 0;
