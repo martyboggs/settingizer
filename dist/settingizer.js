@@ -211,7 +211,11 @@ function create_settings(data, model) {
 					} else if (type === 'button') {
 						var button_text = modelActive.sc_button_text;
 						if (!button_text) button_text = capitalize(prop);
-						html('<div><a class="sc-btn" href="' + url + '">' + button_text + '</a></div>');
+						if (url) {
+							html('<div><a class="sc-btn" href="' + url + '">' + button_text + '</a></div>');
+						} else {
+							html('<div><button type="button" class="sc-btn">' + button_text + '</button></div>');
+						}
 					} else {
 						html('<div><input type="' + type + '" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + placeholder + readonly + required + ' value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
 					}
