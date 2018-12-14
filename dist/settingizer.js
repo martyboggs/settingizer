@@ -209,7 +209,9 @@ function create_settings(data, model) {
 						html(option);
 					} else if (type === 'buttons') {
 					} else if (type === 'button') {
-						html('<div><a class="sc-btn" href="' + url + '">' + modelActive.sc_button_text + '</a></div>');
+						var button_text = modelActive.sc_button_text;
+						if (!button_text) button_text = capitalize(prop);
+						html('<div><a class="sc-btn" href="' + url + '">' + button_text + '</a></div>');
 					} else {
 						html('<div><input type="' + type + '" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + placeholder + readonly + required + ' value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
 					}
