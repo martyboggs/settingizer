@@ -51,6 +51,20 @@
 	background: transparent;
 	border: 0;
 }
+.settingizer.shopify-theme .grid-buttons label {
+	padding: 10px 20px 10px 0;
+}
+.settingizer.shopify-theme .grid-buttons .delete-x,
+.settingizer.shopify-theme .grid-buttons .delete-y {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-right-width: 0;
+}
+.settingizer.shopify-theme .grid-buttons .add-x,
+.settingizer.shopify-theme .grid-buttons .add-y {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
 
 .settingizer.shopify-theme select {
 	padding: 5px 10px;

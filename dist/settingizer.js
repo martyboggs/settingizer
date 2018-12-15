@@ -14,6 +14,8 @@ function create_settings(data, model) {
 	// todo: warning shows for children of sc_show: false
 	// todo: classname undefined
 
+	// restrictions: no [ ] allowed in key names
+
 	var htmlStr = '';
 
 	var index = [];
@@ -84,27 +86,34 @@ function create_settings(data, model) {
 		checkModel();
 		if (buildModel) {
 			questions();
+			checkModel();
 		} else {
 			warning();
 		}
-		checkModel(); // todo: if questions can checkModel too, this can be removed
 
 		var sc_hide = modelActive.sc_show === false ? ' sc-hide' : '';
 		var prop = index[index.length - 1];
 
 		if (Array.isArray(value)) {
 			// console.log('array');
-			var prop = index[index.length - 1];
-			if (prop !== undefined && isNaN(prop) && modelActive.sc_label !== false) {
+			if (prop !== undefined && isNaN(prop) && modelActive.sc_label) {
 				html('<label class="fieldset' + sc_hide + ' ' + prop + '-label">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
 			}
+
+			var name = Array.isArray(data) ? ' data-name="root' : ' data-name="';
+			for (var i = 0; i < index.length; i += 1) {
+				if (i === 0 && !Array.isArray(data)) name += index[i];
+				else name += '[' + index[i] + ']';
+			}
+			name += '"';
+
 			// if array has as many arrays of the same length
 			if (gridCheck === 0) {
 				if (modelActive.sc_grid) {
 					gridCheck = value.length;
-					html('<div class="grid array-group' + sc_hide + ' ' + prop + '-group">');
+					html('<div class="grid array-group' + sc_hide + ' ' + prop + '-group"' + name + '>');
 				} else {
-					html('<div class="array-group' + sc_hide + ' ' + prop + '-group">');
+					html('<div class="array-group' + sc_hide + ' ' + prop + '-group"' + name + '>');
 				}
 			} else {
 				html('<div class="grid-row' + sc_hide + '">');
@@ -130,7 +139,7 @@ function create_settings(data, model) {
 
 		} else if (typeof value === 'function') {
 
-		} else if (index[index.length - 1] === undefined || (!isNaN(index[index.length - 1]) && index[index.length - 1] === parent.length)) { // reached end of object/array
+		} else if (prop === undefined || (!isNaN(prop) && prop === parent.length)) { // reached end of object/array
 			// console.log('end of sc_keys');
 			if (Array.isArray(parent) && modelActive.sc_add && gridCheck === 0) {
 				html('<div class="array-button"><button class="add-item sc-btn" type="button">Add item</button></div>');
@@ -138,7 +147,7 @@ function create_settings(data, model) {
 			html('</div>');
 
 			if (gridCheck === 1) {
-				html('<div class="grid-buttons"><button class="add-x sc-btn" type="button">Add X</button><button class="add-y sc-btn" type="button">Add Y</button></div>');
+				html('<div class="grid-buttons"><div><label>X</label><button class="delete-x sc-btn" type="button">-</button><button class="add-x sc-btn" type="button">+</button></div><div><label>Y</label><button class="delete-y sc-btn" type="button">-</button><button class="add-y sc-btn" type="button">+</button></div></div>');
 				html('</div>');
 				index.pop();
 			}
@@ -172,14 +181,16 @@ function create_settings(data, model) {
 				else if (value && value.length > 134) type = 'textarea';
 			}
 
-			var name = Array.isArray(data) ? 'root' : '';
+			var name = Array.isArray(data) ? ' name="root' : ' name="';
 			for (var i = 0; i < index.length; i += 1) {
 				if (i === 0 && !Array.isArray(data)) name += index[i];
 				else name += '[' + index[i] + ']';
 			}
-			var prop = index[index.length - 1];
+			name += '"';
+			var key = ' data-key="' + prop + '"';
 			var className = prop + ' type-' + type;
 			var id = getId(prop);
+			var idAtt = ' id="' + id + '"';
 			var val = htmlEncode(value);
 			var placeholder = modelActive.sc_placeholder ? ' placeholder="' + modelActive.sc_placeholder + '"' : '';
 			var readonly = modelActive.sc_readonly ? ' readonly' : '';
@@ -196,15 +207,15 @@ function create_settings(data, model) {
 				html(open_link);
 					var option = '';
 					if (type === 'textarea') {
-						html('<div><textarea rows="5" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + placeholder + readonly + required + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea></div>');
+						html('<div><textarea rows="5"' + idAtt + key + name + placeholder + readonly + required + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea></div>');
 					} else if (type === 'select') {
-						option += '<div><select id="' + id + '" data-key="' + prop + '" name="' + name + '"' + required +'>';
+						option += '<div><select' + idAtt + key + name + required +'>';
 						option += modelActive.sc_options.reduce(function (a, v) { return a + '<option value="' + v + '"' + (val === v ? ' selected' : '') + '>' + capitalize(v) + '</option>'; }, '');
 						option += '</select></div>';
 						html(option);
 					} else if (type === 'radios') {
 						option += '<div>';
-						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="radioset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + required + ' value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
+						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="radioset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '"' + key + name + required + ' value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
 						option += '</div>';
 						html(option);
 					} else if (type === 'buttons') {
@@ -217,7 +228,7 @@ function create_settings(data, model) {
 							html('<div><button type="button" class="sc-btn">' + button_text + '</button></div>');
 						}
 					} else {
-						html('<div><input type="' + type + '" id="' + id + '" data-key="' + prop + '" name="' + name + '"' + placeholder + readonly + required + ' value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
+						html('<div><input type="' + type + '"' + idAtt + key + name + placeholder + readonly + required + ' value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
 					}
 				html(close_link);
 			html('</div>'); // close fieldset
@@ -235,7 +246,7 @@ function create_settings(data, model) {
 			index[index.length - 1] = obj.sc_keys[i + 1];
 		}
 
-		// todo: delete sc_keys if done?
+		// todo: delete sc_keys if done? could use original object
 
 		value = data; // reset value before traversing
 		for (var i = 0; i < index.length; i += 1) {
@@ -246,7 +257,6 @@ function create_settings(data, model) {
 
 	function html(str) {
 		htmlStr += str;
-		// todo: this line slows it down a lot, only needed when building model
 		if (buildModel) {
 			form.innerHTML = htmlStr;
 		}
@@ -485,7 +495,7 @@ function create_settings(data, model) {
 					disableNameEls(lastItem, false);
 				} else {
 					var item = lastItem.cloneNode(true);
-					fixAtts(item);
+					fixAtts(item, par[0].dataset.name);
 					clearValues(item);
 					par[0].insertBefore(item, lastItem.nextSibling);
 				}
@@ -493,42 +503,57 @@ function create_settings(data, model) {
 				// if only 1, hide it and disable the fields
 				var par = getClosest('.array-group', e.target);
 				var items = par[0].childNodes;
-				items = [].slice.call(items, 0, -1); // remove last
+				items = [].slice.call(items, 0, -1); // remove last item (buttons)
 				if (items.length > 1) {
-					// todo: fixatts for all items
 					par[0].removeChild(par[1]);
+					items = par[0].childNodes; // refresh
+					items = [].slice.call(items, 0, -1); // remove last item (buttons)
+					fixAtts(items, par[0].dataset.name);
 				} else {
 					par[1].style.display = 'none';
 					disableNameEls(par[1], true);
 				}
 			} else if (e.target.matches('.add-x') || e.target.matches('.add-y')) {
 				var par = getClosest('.array-group', e.target);
-				var items = par[0].childNodes;
-				items = [].slice.call(items, 0, -1); // remove last
-				var lastItem = items[items.length - 1];
+				var rows = par[0].querySelectorAll('.grid-row');
+				var lastRow = rows[rows.length - 1];
+				var item;
 				if (e.target.matches('.add-x')) {
-					var rows = par[0].querySelectorAll('.grid-row');
 					for (var i = 0; i < rows.length; i += 1) {
 						item = rows[i].childNodes[rows[i].childNodes.length - 1].cloneNode(true);
-						fixAtts(item);
+						fixAtts(item, par[0].dataset.name);
 						clearValues(item);
 						rows[i].appendChild(item);
 					}
 				} else {
-					var item = lastItem.cloneNode(true);
-					fixAtts(item);
-					clearValues(item);
-					par[0].insertBefore(item, lastItem.nextSibling);
+					var row = lastRow.cloneNode(true);
+					fixAtts(row, par[0].dataset.name);
+					clearValues(row);
+					par[0].insertBefore(row, lastRow.nextSibling);
+				}
+			} else if (e.target.matches('.delete-x') || e.target.matches('.delete-y')) {
+				var par = getClosest('.array-group', e.target);
+				var rows = par[0].querySelectorAll('.grid-row');
+				if (e.target.matches('.delete-x')) {
+					for (var i = 0; i < rows.length; i += 1) {
+						item = rows[i].childNodes[rows[i].childNodes.length - 1];
+						rows[i].removeChild(item);
+					}
+				} else {
+					var lastRow = rows[rows.length - 1];
+					par[0].removeChild(lastRow);
 				}
 			}
 		});
 		el.addEventListener('mousedown', function (e) {
+			// // check if clicking the rearrange icon
+			return; // remove this
 			var par = getClosest('.array-group', e.target);
 			if (par) {
 				par[1].onDragStart = function () {
 					return false;
 				}
-				// draggable(par[1]);
+				draggable(par[1]);
 			}
 		});
 
@@ -541,8 +566,11 @@ function create_settings(data, model) {
 		}
 
 		function draggable(el) {
+			var position = el.style.position;
+			var zIndex = el.style.zIndex;
 			el.style.position = 'absolute';
 			el.style.zIndex = 1000;
+			// todo: height too
 
 			// document.body.append(el);
 
@@ -562,6 +590,8 @@ function create_settings(data, model) {
 			el.onmouseup = function() {
 				document.removeEventListener('mousemove', onMouseMove);
 				el.onmouseup = null;
+				el.style.position = position;
+				el.style.zIndex = zIndex;
 			};
 		}
 	}
@@ -590,26 +620,33 @@ function create_settings(data, model) {
 		return false;
 	}
 
-	function fixAtts(item) { // updates id, for, name
-		var fieldsets = item.querySelectorAll('div.fieldset');
-		if (item.matches('div.fieldset')) fieldsets = [item];
-		var els, id, prev;
-		for (var i = 0; i < fieldsets.length; i += 1) {
-			els = fieldsets[i].querySelectorAll('input, select');
-			for (var j = 0; j < els.length; j += 1) {
-				// id
-				id = getId(els[j].dataset.key);
-				els[j].id = id;
-				// for
-				prev = els[j].previousSibling;
-				if (prev && prev.tagname === 'LABEL') prev.htmlFor = id;
-				next = els[j].nextSibling;
-				if (next && next.tagname === 'LABEL') next.htmlFor = id;
-				// name - todo: doesn't work
-				els[j].name = els[j].name.replace(/^.+(?:\[(\d+)\])/, function (substring, match, ind, original) {
-					var place = substring.length - match.length - 1;
-					return original.slice(0, place) + (Number(match) + 1) + ']';
-				});
+	function fixAtts(itemOrItems, key) { // updates id, for, name
+		var i, j, k;
+		var item, fieldsets;
+		var items = itemOrItems.length ? itemOrItems : [itemOrItems];
+		var reg = new RegExp('^' + key.replace(/\[/g, '\\[').replace(/\]/g, '\\]') + '\\[(\\d+)\\]');
+		for (i = 0; i < items.length; i += 1) {
+			item = items[i];
+			fieldsets = item.querySelectorAll('div.fieldset');
+			if (item.matches('div.fieldset')) fieldsets = [item];
+			var els, id, prev;
+			for (j = 0; j < fieldsets.length; j += 1) {
+				els = fieldsets[j].querySelectorAll('input, select');
+				for (k = 0; k < els.length; k += 1) {
+					// id
+					id = getId(els[k].dataset.key);
+					els[k].id = id;
+					// for
+					prev = els[k].previousSibling;
+					if (prev && prev.tagname === 'LABEL') prev.htmlFor = id;
+					next = els[k].nextSibling;
+					if (next && next.tagname === 'LABEL') next.htmlFor = id;
+					// name
+					els[k].name = els[k].name.replace(reg, function (substring, match, ind, original) {
+						var place = substring.length - match.length - 1;
+						return original.slice(0, place) + (itemOrItems.length ? i : Number(match) + 1) + ']';
+					});
+				}
 			}
 		}
 	}

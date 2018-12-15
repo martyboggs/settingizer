@@ -45,6 +45,8 @@
 .settingizer select {
 	width: 100%;
 	max-width: 180px;
+	padding: 5px 3px;
+	border: 1px solid #bbb;
 }
 
 .settingizer textarea {
@@ -166,8 +168,18 @@
 .grid-buttons {
 	border: 0;
 }
-.grid-buttons button {
-	margin-right: 10px;
+.settingizer .grid-buttons > div {
+	display: flex;
+}
+.settingizer .grid-buttons > div:first-child {
+	margin-bottom: 5px;
+}
+.settingizer .grid-buttons > div > * {
+	align-self: flex-start;
+}
+.settingizer .grid-buttons label {
+	min-width: 0;
+	padding: 5px 20px 5px 0;
 }
 
 /* fieldset */
