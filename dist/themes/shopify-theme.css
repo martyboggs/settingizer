@@ -101,6 +101,10 @@
 .settingizer.shopify-theme .fieldset label {
 	margin-bottom: 5px;
 }
+.settingizer.shopify-theme .fieldset.type-radios > label {
+	margin-bottom: 0;
+}
+
 
 @media (max-width: 1040px) {
 }

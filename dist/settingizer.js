@@ -39,7 +39,7 @@ function create_settings(data, model) {
 
 	var form = document.createElement('form');
 	build_settings();
-	fixCss();
+	// fixCss();
 	el.appendChild(form);
 
 	if (buildModel) {

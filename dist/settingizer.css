@@ -4,6 +4,7 @@
 	color: #14171a;
 	background: white;
 	margin: 0 auto;
+	overflow: hidden;
 }
 
 .settingizer * {
@@ -11,7 +12,7 @@
 }
 
 .settingizer > form {
-	margin: -10px;
+	margin: -5px;
 }
 
 .settingizer p {
@@ -31,6 +32,7 @@
 .settingizer a,
 .settingizer a * {
 	cursor: pointer;
+	text-decoration: none;
 }
 .settingizer a:not(.sc-btn):hover {
 	opacity: 0.5;
@@ -51,6 +53,7 @@
 
 .settingizer textarea {
 	max-width: none;
+	display: block;
 }
 
 .settingizer input[type="checkbox"],
@@ -105,6 +108,7 @@
 .settingizer .sc-header {
 	display: flex;
 	justify-content: space-between;
+	padding: 5px;
 }
 .settingizer .order-buttons {
 	display: flex;
@@ -130,7 +134,7 @@
 }
 
 .settingizer .sc-submit {
-	padding: 0 10px 10px;
+	padding: 5px;
 	text-align: right;
 }
 
@@ -140,7 +144,7 @@
 
 .settingizer .sc-message {
 	margin: 0;
-	padding: 10px 10px 0 10px
+	padding: 5px;
 }
 
 /* groups */
@@ -151,10 +155,6 @@
 }
 .object-group {
 	flex-direction: column;
-}
-.array-group {
-	margin: -5px;
-	padding: 10px 10px 10px 10px;
 }
 .array-group > * {
 	border: 1px solid #ddd;
@@ -168,6 +168,9 @@
 	flex: 0 0 100%;
 	border: 0;
 }
+.array-group .object-group {
+	padding: 5px;
+}
 
 .grid {
 	flex-direction: column;
@@ -175,7 +178,7 @@
 }
 .grid-row {
 	display: flex;
-	padding: 10px 5px 0 5px;
+	padding: 5px;
 	min-height: 50px;
 }
 .grid-buttons {
@@ -192,26 +195,18 @@
 }
 .settingizer .grid-buttons label {
 	min-width: 0;
-	padding: 5px 20px 5px 0;
 }
 
 /* fieldset */
 .fieldset {
 	display: flex;
-	padding: 10px 10px 0;
+	padding: 5px;
 }
 .fieldset.type-select div {
 	flex-grow: 1;
 }
-.array-group > div.fieldset,
-.object-group > div.fieldset:last-child {
-	padding-bottom: 10px;
-}
-label.fieldset {
-	padding-bottom: 0;
-}
 .grid-row .fieldset {
-	padding: 0 5px 10px;
+	padding: 5px;
 }
 .fieldset.type-checkbox {
 	flex-direction: row;
@@ -220,14 +215,13 @@ label.fieldset {
 	padding: 0;
 }
 .fieldset.type-radios > label {
-	padding: 10px 10px 0;
+	padding: 5px;
 }
 .fieldset .radioset {
 	display: flex;
 	flex-direction: row;
-	padding: 10px 10px 0;
+	padding: 5px;
 }
 .fieldset .radioset label {
 	order: 1;
-	margin-left: 10px;
 }
