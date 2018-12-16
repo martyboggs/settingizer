@@ -129,9 +129,10 @@ function create_settings(data, model) {
 				html('<label class="fieldset' + sc_hide + ' ' + prop + '-label">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
 			}
 			html('<div class="object-group' + sc_hide + ' ' + prop + '-group">');
-			if (Array.isArray(parent) && modelActive.sc_add) {
+			if (Array.isArray(parent) && (modelActive.sc_add || modelActive.sc_order)) {
 				var orderButtons = modelActive.sc_order ? '<button type="button" class="move-up">-</button><button type="button" class="move-down">+</button>' : '';
-				html('<div class="sc-header"><div class="order-buttons">' + orderButtons + '</div><button type="button" class="delete-item">x</button></div>');
+				var deleteButton = modelActive.sc_add ? '<button type="button" class="delete-item">x</button>' : '';
+				html('<div class="sc-header"><div class="order-buttons">' + orderButtons + '</div>' + deleteButton + '</div><div class="sc-spacer"></div>');
 			}
 
 			var all_keys = getFirstObject().sc_keys;
@@ -168,7 +169,12 @@ function create_settings(data, model) {
 			// reset descriptions
 			if (!Array.isArray(parent) && typeof parent === 'object') descriptions = {};
 
-			if (!Array.isArray(parent)) html('<div class="sc-spacer"></div>');
+			var lastProp = false;
+			if (!Array.isArray(parent)) {
+				var obj = getFirstObjectParent();
+				lastProp = obj.sc_keys.indexOf(index[index.length - 1]) === obj.sc_keys.length - 1;
+			}
+			if (!Array.isArray(parent) && !lastProp) html('<div class="sc-spacer' + sc_hide + '"></div>');
 			nextProp();
 
 		} else {
@@ -240,7 +246,7 @@ function create_settings(data, model) {
 				var obj = getFirstObjectParent();
 				lastProp = obj.sc_keys.indexOf(prop) === obj.sc_keys.length - 1;
 			}
-			if (!Array.isArray(parent) && !lastProp) html('<div class="sc-spacer"></div>');
+			if (!Array.isArray(parent) && !lastProp) html('<div class="sc-spacer' + sc_hide + '"></div>');
 			nextProp();
 		}
 		traverse();
