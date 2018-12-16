@@ -129,9 +129,8 @@ function create_settings(data, model) {
 			}
 			html('<div class="object-group' + sc_hide + ' ' + prop + '-group">');
 			if (Array.isArray(parent) && modelActive.sc_add) {
-				html('<div class="sc-header">' +
-				'<div class="order-buttons"><button type="button" class="move-up">-</button><button type="button" class="move-down">+</button></div>' +
-				'<button type="button" class="delete-item">x</button></div>');
+				var orderButtons = modelActive.sc_order ? '<button type="button" class="move-up">-</button><button type="button" class="move-down">+</button>' : '';
+				html('<div class="sc-header"><div class="order-buttons">' + orderButtons + '</div><button type="button" class="delete-item">x</button></div>');
 			}
 
 			var all_keys = getFirstObject().sc_keys;

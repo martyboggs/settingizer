@@ -491,6 +491,7 @@ var newSizeChartData = [{"id":"d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb","title":"ba
 	var data = newSizeChartData;
 // sizeChartData asked about undefined??
 	create_settings(data, {
+	sc_order: true,
 	"0": {
 		"id": {
 			"sc_show": false,
@@ -510,10 +511,11 @@ var newSizeChartData = [{"id":"d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb","title":"ba
 				"id": {sc_show: false},
 				"type": {sc_type: 'select', sc_options: ['collection', 'product', 'product_type', 'tag', 'vendor', 'all']},
 				"operator": {sc_type: 'select', sc_options: ['is-equal-to', 'is-not-equal-to']},
-				"title": {}
+				"title": {},
 			},
 			"sc_add": true,
-			sc_label: 'cow'
+			sc_label: 'cow',
+			sc_order: false
 		}
 	},
 	"sc_add": true,
