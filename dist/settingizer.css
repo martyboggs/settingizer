@@ -102,15 +102,26 @@
 	-moz-user-select: none;
 }
 
-.settingizer .delete-item {
-	align-self: flex-end;
+.settingizer .sc-header {
+	display: flex;
+	justify-content: space-between;
+}
+.settingizer .order-buttons {
+	margin: -1px;
+}
+.settingizer .sc-header button {
 	border: 0;
 	width: 21px;
 	text-align: center;
 	padding: 0;
-	margin: -1px;
 	cursor: pointer;
 	height: 21px;
+}
+.settingizer .order-buttons button:first-child {
+	margin-right: 1px;
+}
+.settingizer .delete-item {
+	margin: -1px;
 }
 .settingizer .delete-item:hover {
 	background: #fe7c7c;
@@ -164,6 +175,7 @@
 .grid-row {
 	display: flex;
 	padding: 10px 5px 0 5px;
+	min-height: 50px;
 }
 .grid-buttons {
 	border: 0;

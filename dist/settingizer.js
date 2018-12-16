@@ -129,7 +129,9 @@ function create_settings(data, model) {
 			}
 			html('<div class="object-group' + sc_hide + ' ' + prop + '-group">');
 			if (Array.isArray(parent) && modelActive.sc_add) {
-				html('<button type="button" class="delete-item">x</button>');
+				html('<div class="sc-header">' +
+				'<div class="order-buttons"><button type="button" class="move-up">-</button><button type="button" class="move-down">+</button></div>' +
+				'<button type="button" class="delete-item">x</button></div>');
 			}
 
 			var all_keys = getFirstObject().sc_keys;
@@ -426,8 +428,8 @@ function create_settings(data, model) {
 		for (i = 0; i < index.length + 1; i += 1) {
 			for (prop in option) {
 				if (prop.match(/^sc_/)) {
-					// for some props, just look at the last one
-					if (['sc_label'].indexOf(prop) === -1 || i === index.length) {
+					// for some props, just look at the current level
+					if (['sc_label', 'sc_description'].indexOf(prop) === -1 || i === index.length) {
 						modelActive[prop] = option[prop];
 					}
 				}
@@ -499,49 +501,74 @@ function create_settings(data, model) {
 					clearValues(item);
 					par[0].insertBefore(item, lastItem.nextSibling);
 				}
-			} else if (e.target.matches('.delete-item')) {
+			} else if (e.target.matches('.add-x')) {
+				var par = getClosest('.array-group', e.target);
+				var items = par[0].querySelectorAll('.grid-row');
+				var lastItem = items[0].childNodes[items[0].childNodes.length - 1];
+				var item;
+				if (items[0].childNodes.length === 1 && lastItem.style.display === 'none') {
+					for (var i = 0; i < items.length; i += 1) {
+						items[i].childNodes[items[i].childNodes.length - 1].style.display = '';
+						clearValues(items[i].childNodes[items[i].childNodes.length - 1]);
+					}
+				} else {
+					for (var i = 0; i < items.length; i += 1) {
+						item = items[i].childNodes[items[i].childNodes.length - 1].cloneNode(true);
+						fixAtts(item, par[0].dataset.name);
+						clearValues(item);
+						items[i].appendChild(item);
+					}
+				}
+			} else if (e.target.matches('.delete-item') || e.target.matches('.delete-y')) {
 				// if only 1, hide it and disable the fields
 				var par = getClosest('.array-group', e.target);
 				var items = par[0].childNodes;
 				items = [].slice.call(items, 0, -1); // remove last item (buttons)
+				var lastItem = e.target.matches('.delete-y') ? items[items.length - 1] : par[1];
 				if (items.length > 1) {
-					par[0].removeChild(par[1]);
-					items = par[0].childNodes; // refresh
-					items = [].slice.call(items, 0, -1); // remove last item (buttons)
-					fixAtts(items, par[0].dataset.name);
+					par[0].removeChild(lastItem);
+					if (e.target.matches('.delete-item')) {
+						items = par[0].childNodes; // refresh
+						items = [].slice.call(items, 0, -1); // remove last item (buttons)
+						fixAtts(items, par[0].dataset.name);
+					}
 				} else {
-					par[1].style.display = 'none';
-					disableNameEls(par[1], true);
+					lastItem.style.display = 'none';
+					disableNameEls(lastItem, true);
 				}
-			} else if (e.target.matches('.add-x') || e.target.matches('.add-y')) {
+			} else if (e.target.matches('.delete-x')) {
 				var par = getClosest('.array-group', e.target);
-				var rows = par[0].querySelectorAll('.grid-row');
-				var lastRow = rows[rows.length - 1];
+				var items = par[0].querySelectorAll('.grid-row');
+				var lastItem = items[0].childNodes[items[0].childNodes.length - 1];
 				var item;
-				if (e.target.matches('.add-x')) {
-					for (var i = 0; i < rows.length; i += 1) {
-						item = rows[i].childNodes[rows[i].childNodes.length - 1].cloneNode(true);
-						fixAtts(item, par[0].dataset.name);
-						clearValues(item);
-						rows[i].appendChild(item);
+				if (items[0].childNodes.length > 1) {
+					for (var i = 0; i < items.length; i += 1) {
+						item = items[i].childNodes[items[i].childNodes.length - 1];
+						items[i].removeChild(item);
 					}
 				} else {
-					var row = lastRow.cloneNode(true);
-					fixAtts(row, par[0].dataset.name);
-					clearValues(row);
-					par[0].insertBefore(row, lastRow.nextSibling);
+					for (var i = 0; i < items.length; i += 1) {
+						items[i].childNodes[items[i].childNodes.length - 1].style.display = 'none';
+					}
 				}
-			} else if (e.target.matches('.delete-x') || e.target.matches('.delete-y')) {
+			} else if (e.target.matches('.move-up') || e.target.matches('.move-down')) {
 				var par = getClosest('.array-group', e.target);
-				var rows = par[0].querySelectorAll('.grid-row');
-				if (e.target.matches('.delete-x')) {
-					for (var i = 0; i < rows.length; i += 1) {
-						item = rows[i].childNodes[rows[i].childNodes.length - 1];
-						rows[i].removeChild(item);
+				var items = par[0].childNodes;
+				items = [].slice.call(items, 0, -1); // remove last item (buttons)
+				if (e.target.matches('.move-up')) {
+					if (par[1].previousSibling) {
+						par[0].insertBefore(par[1], par[1].previousSibling);
+						items = par[0].childNodes; // refresh
+						items = [].slice.call(items, 0, -1); // remove last item (buttons)
+						fixAtts(items, par[0].dataset.name);
 					}
 				} else {
-					var lastRow = rows[rows.length - 1];
-					par[0].removeChild(lastRow);
+					if (par[1].nextSibling.nextSibling) {
+						par[0].insertBefore(par[1], par[1].nextSibling.nextSibling);
+						items = par[0].childNodes; // refresh
+						items = [].slice.call(items, 0, -1); // remove last item (buttons)
+						fixAtts(items, par[0].dataset.name);
+					}
 				}
 			}
 		});
@@ -652,7 +679,14 @@ function create_settings(data, model) {
 	}
 
 	function clearValues(item) {
-		// todo:
+		var inputs = item.querySelectorAll('input');
+		for (var i = 0; i < inputs.length; i += 1) {
+			inputs[i].value = '';
+		}
+		var selects = item.querySelectorAll('select');
+		for (var i = 0; i < selects.length; i += 1) {
+			selects[i].selectedIndex = 0;
+		}
 	}
 
 	function fixCss() {
