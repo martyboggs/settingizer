@@ -106,14 +106,15 @@ function create_settings(data, model) {
 				else name += '[' + index[i] + ']';
 			}
 			name += '"';
+			var min = modelActive.sc_min ? ' data-min="' + modelActive.sc_min + '"' : '';
 
 			// if array has as many arrays of the same length
 			if (gridCheck === 0) {
 				if (modelActive.sc_grid) {
 					gridCheck = value.length;
-					html('<div class="grid array-group' + sc_hide + ' ' + prop + '-group"' + name + '>');
+					html('<div class="grid array-group' + sc_hide + ' ' + prop + '-group"' + name + min + '>');
 				} else {
-					html('<div class="array-group' + sc_hide + ' ' + prop + '-group"' + name + '>');
+					html('<div class="array-group' + sc_hide + ' ' + prop + '-group"' + name + min + '>');
 				}
 			} else {
 				html('<div class="grid-row' + sc_hide + '">');
@@ -519,21 +520,22 @@ function create_settings(data, model) {
 					}
 				}
 			} else if (e.target.matches('.delete-item') || e.target.matches('.delete-y')) {
-				// if only 1, hide it and disable the fields
 				var par = getClosest('.array-group', e.target);
 				var items = par[0].childNodes;
 				items = [].slice.call(items, 0, -1); // remove last item (buttons)
 				var lastItem = e.target.matches('.delete-y') ? items[items.length - 1] : par[1];
-				if (items.length > 1) {
-					par[0].removeChild(lastItem);
-					if (e.target.matches('.delete-item')) {
-						items = par[0].childNodes; // refresh
-						items = [].slice.call(items, 0, -1); // remove last item (buttons)
-						fixAtts(items, par[0].dataset.name);
+				if (!par[0].dataset.min || items.length > Number(par[0].dataset.min)) {
+					if (items.length > 1) {
+						par[0].removeChild(lastItem);
+						if (e.target.matches('.delete-item')) {
+							items = par[0].childNodes; // refresh
+							items = [].slice.call(items, 0, -1); // remove last item (buttons)
+							fixAtts(items, par[0].dataset.name);
+						}
+					} else {
+						lastItem.style.display = 'none';
+						disableNameEls(lastItem, true);
 					}
-				} else {
-					lastItem.style.display = 'none';
-					disableNameEls(lastItem, true);
 				}
 			} else if (e.target.matches('.delete-x')) {
 				var par = getClosest('.array-group', e.target);
