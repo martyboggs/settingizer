@@ -107,6 +107,7 @@
 	justify-content: space-between;
 }
 .settingizer .order-buttons {
+	display: flex;
 	margin: -1px;
 }
 .settingizer .sc-header button {

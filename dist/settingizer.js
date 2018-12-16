@@ -514,9 +514,9 @@ function create_settings(data, model) {
 				} else {
 					for (var i = 0; i < items.length; i += 1) {
 						item = items[i].childNodes[items[i].childNodes.length - 1].cloneNode(true);
+						items[i].appendChild(item);
 						fixAtts(item, par[0].dataset.name);
 						clearValues(item);
-						items[i].appendChild(item);
 					}
 				}
 			} else if (e.target.matches('.delete-item') || e.target.matches('.delete-y')) {
@@ -651,7 +651,9 @@ function create_settings(data, model) {
 		var i, j, k;
 		var item, fieldsets;
 		var items = itemOrItems.length ? itemOrItems : [itemOrItems];
-		var reg = new RegExp('^' + key.replace(/\[/g, '\\[').replace(/\]/g, '\\]') + '\\[(\\d+)\\]');
+		var reg = items[0].parentNode && items[0].parentNode.className.indexOf('grid-row') !== -1
+			? new RegExp('^' + key.replace(/\[/g, '\\[').replace(/\]/g, '\\]') + '\\[\\d+\\]\\[(\\d+)\\]')
+			: new RegExp('^' + key.replace(/\[/g, '\\[').replace(/\]/g, '\\]') + '\\[(\\d+)\\]');
 		for (i = 0; i < items.length; i += 1) {
 			item = items[i];
 			fieldsets = item.querySelectorAll('div.fieldset');
