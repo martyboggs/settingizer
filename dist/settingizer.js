@@ -168,6 +168,7 @@ function create_settings(data, model) {
 			// reset descriptions
 			if (!Array.isArray(parent) && typeof parent === 'object') descriptions = {};
 
+			if (!Array.isArray(parent)) html('<div class="sc-spacer"></div>');
 			nextProp();
 
 		} else {
@@ -234,6 +235,12 @@ function create_settings(data, model) {
 					}
 				html(close_link);
 			html('</div>'); // close fieldset
+			var lastProp = false;
+			if (!Array.isArray(parent)) {
+				var obj = getFirstObjectParent();
+				lastProp = obj.sc_keys.indexOf(prop) === obj.sc_keys.length - 1;
+			}
+			if (!Array.isArray(parent) && !lastProp) html('<div class="sc-spacer"></div>');
 			nextProp();
 		}
 		traverse();

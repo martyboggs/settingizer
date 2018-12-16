@@ -225,3 +225,6 @@
 .fieldset .radioset label {
 	order: 1;
 }
+.sc-spacer {
+	height: 20px;
+}
