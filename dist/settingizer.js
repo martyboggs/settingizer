@@ -8,9 +8,7 @@ function create_settings(data, model) {
 	// make copy so we can add sc_keys to it
 	data = Array.isArray(data) ? data.concat() : Object.assign({}, data);
 
-	// todo: reorder
 	// todo: simple array delete button
-	// todo: name
 	// todo: warning shows for children of sc_show: false
 	// todo: classname undefined
 
@@ -40,6 +38,9 @@ function create_settings(data, model) {
 	var form = document.createElement('form');
 	build_settings();
 	// fixCss();
+	console.log(model);
+	if (model.sc_action) form.action = model.sc_action;
+	if (model.sc_method) form.method = model.sc_method;
 	el.appendChild(form);
 
 	if (buildModel) {
@@ -442,7 +443,7 @@ function create_settings(data, model) {
 			for (prop in option) {
 				if (prop.match(/^sc_/)) {
 					// for some props, just look at the current level
-					if (['sc_label', 'sc_description'].indexOf(prop) === -1 || i === index.length) {
+					if (['sc_label', 'sc_description', 'sc_action', 'sc_method'].indexOf(prop) === -1 || i === index.length) {
 						modelActive[prop] = option[prop];
 					}
 				}
