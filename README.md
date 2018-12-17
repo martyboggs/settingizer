@@ -28,6 +28,8 @@ Your config will be generated with a schema of your data and the answers to the 
 
 | Property | Default | Description |
 | --- | --- | --- |
+| sc_action | '' | Define the action attribute of the form element |
+| sc_method | '' | Define the method attribute of the form element |
 | sc_show | true | Show/hide some property. |
 | sc_type | '' | Choose the type of data. Accepts select, buttons, radios, checkboxes, grid, button. If there's an array of arrays with equal length, you can create a grid. |
 | sc_options | [] | This is used to list all options, including unselected ones, for dropdowns, buttons, radios, checkboxes etc. |

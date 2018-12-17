@@ -370,6 +370,7 @@ function create_settings(data, model) {
 			}
 			if (model_value) {
 				var model_keys = Object.keys(model_value);
+				model_keys = model_keys.filter(function (key) { return !!key.match(/^sc_/); });
 				var extra_data = data_keys.reduce(function (a, v) { if (model_keys.indexOf(v) === -1) { a.push(v); } return a; }, []);
 				if (extra_data.length) console.warn('Config is missing ' + extra_data.join(', ') + ' from ' + index_path + '.');
 			}
