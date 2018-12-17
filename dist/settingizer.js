@@ -38,7 +38,6 @@ function create_settings(data, model) {
 	var form = document.createElement('form');
 	build_settings();
 	// fixCss();
-	console.log(model);
 	if (model.sc_action) form.action = model.sc_action;
 	if (model.sc_method) form.method = model.sc_method;
 	el.appendChild(form);
