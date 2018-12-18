@@ -26,6 +26,7 @@ function create_settings(data, model) {
 	var descriptions = {};
 	var gridCheck = 0;
 	var index_path;
+	var empty = false;
 
 	var traverses = 0;
 
@@ -68,21 +69,6 @@ function create_settings(data, model) {
 
 		if (value === null) value = '';
 
-		// check for empty [] {}
-		if (Array.isArray(value)) {
-			if (value.length === 0) {
-				nextProp();
-				traverse();
-				return;
-			}
-	 	} else if (typeof value === 'object') {
-			if (Object.keys(value).length === 0) {
-				nextProp();
-				traverse();
-				return;
-			}
-		}
-
 		checkModel();
 		if (buildModel) {
 			questions();
@@ -119,16 +105,29 @@ function create_settings(data, model) {
 			} else {
 				html('<div class="grid-row' + sc_hide + '">');
 			}
+
+			var val = value[0];
+
+			// allow empty arrays
+			if (value.length === 0) {
+				var first = getFirstObject();
+				if (first && first[0] && first[0].sc_keys) {
+					val = {};
+					empty = first[0].sc_keys;
+				}
+			}
+
 			index.push(0);
 			parent = value;
-			value = parent[0];
+			value = val;
 
 		} else if (typeof value === 'object' && value) { // typeof null === 'object' :P
 			// console.log('object');
+			var hide = Array.isArray(parent) && empty && !modelActive.sc_min ? ' style="display: none"' : '';
 			if (prop !== undefined && isNaN(prop) && modelActive.sc_label !== false) {
 				html('<label class="fieldset' + sc_hide + ' ' + prop + '-label">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
 			}
-			html('<div class="object-group' + sc_hide + ' ' + prop + '-group">');
+			html('<div class="object-group' + sc_hide + (' ' + prop) + '-group"' + hide + '>');
 			if (Array.isArray(parent) && (modelActive.sc_add || modelActive.sc_order)) {
 				var orderButtons = modelActive.sc_order ? '<button type="button" class="move-up">-</button><button type="button" class="move-down">+</button>' : '';
 				var deleteButton = modelActive.sc_add ? '<button type="button" class="delete-item">x</button>' : '';
@@ -142,7 +141,7 @@ function create_settings(data, model) {
 
 		} else if (typeof value === 'function') {
 
-		} else if (prop === undefined || (!isNaN(prop) && prop === parent.length)) { // reached end of object/array
+		} else if (prop === undefined || (!isNaN(prop) && prop >= parent.length)) { // reached end of object/array
 			// console.log('end of sc_keys');
 			if (Array.isArray(parent) && modelActive.sc_add && gridCheck === 0) {
 				html('<div class="array-button"><button class="add-item sc-btn" type="button">Add item</button></div>');
@@ -169,12 +168,12 @@ function create_settings(data, model) {
 			// reset descriptions
 			if (!Array.isArray(parent) && typeof parent === 'object') descriptions = {};
 
-			var lastProp = false;
+			var isLastProp = false;
 			if (!Array.isArray(parent)) {
 				var obj = getFirstObjectParent();
-				lastProp = obj.sc_keys.indexOf(index[index.length - 1]) === obj.sc_keys.length - 1;
+				isLastProp = obj.sc_keys.indexOf(index[index.length - 1]) === obj.sc_keys.length - 1;
 			}
-			if (!Array.isArray(parent) && !lastProp) html('<div class="sc-spacer' + sc_hide + '"></div>');
+			if (!Array.isArray(parent) && !isLastProp) html('<div class="sc-spacer' + sc_hide + '"></div>');
 			nextProp();
 
 		} else {
@@ -208,6 +207,12 @@ function create_settings(data, model) {
 			var url = modelActive.sc_link ? modelActive.sc_link.replace(/\*\|(\w+)\|\*/g, function (sub, match) { return parent[match] ? parent[match] : ''; }) : '';
 			var open_link = modelActive.sc_link && type !== 'button' ? '<a href="' + url + '">' : '';
 			var close_link = modelActive.sc_link && type !== 'button' ? '</a>' : '';
+			var disabled = empty && !modelActive.sc_min ? ' disabled' : '';
+			var isLastProp = false;
+			if (!Array.isArray(parent)) {
+				var obj = getFirstObjectParent();
+				isLastProp = obj.sc_keys.indexOf(prop) === obj.sc_keys.length - 1;
+			}
 
 			html('<div class="fieldset' + sc_hide + ' ' + className + '">');
 				// label
@@ -216,18 +221,17 @@ function create_settings(data, model) {
 				html(open_link);
 					var option = '';
 					if (type === 'textarea') {
-						html('<div><textarea rows="5"' + idAtt + key + name + placeholder + readonly + required + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea></div>');
+						html('<div><textarea rows="5"' + idAtt + key + name + placeholder + readonly + required + disabled + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea></div>');
 					} else if (type === 'select') {
-						option += '<div><select' + idAtt + key + name + required +'>';
+						option += '<div><select' + idAtt + key + name + required + disabled +'>';
 						option += modelActive.sc_options.reduce(function (a, v) { return a + '<option value="' + v + '"' + (val === v ? ' selected' : '') + '>' + capitalize(v) + '</option>'; }, '');
 						option += '</select></div>';
 						html(option);
-					} else if (type === 'radios') {
+					} else if (type === 'radios' || type === 'buttons') {
 						option += '<div>';
-						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="radioset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '"' + key + name + required + ' value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
+						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="radioset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '"' + key + name + required + disabled + ' value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
 						option += '</div>';
 						html(option);
-					} else if (type === 'buttons') {
 					} else if (type === 'button') {
 						var button_text = modelActive.sc_button_text;
 						if (!button_text) button_text = capitalize(prop);
@@ -237,16 +241,25 @@ function create_settings(data, model) {
 							html('<div><button type="button" class="sc-btn">' + button_text + '</button></div>');
 						}
 					} else {
-						html('<div><input type="' + type + '"' + idAtt + key + name + placeholder + readonly + required + ' value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
+						html('<div><input type="' + type + '"' + idAtt + key + name + placeholder + readonly + required + disabled + ' value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
 					}
 				html(close_link);
 			html('</div>'); // close fieldset
-			var lastProp = false;
-			if (!Array.isArray(parent)) {
-				var obj = getFirstObjectParent();
-				lastProp = obj.sc_keys.indexOf(prop) === obj.sc_keys.length - 1;
+
+			if (!Array.isArray(parent) && !isLastProp) html('<div class="sc-spacer' + sc_hide + '"></div>');
+
+			// allow empty arrays
+			if (empty) {
+				if (isLastProp) {
+					empty = false;
+					index[index.length - 1] = undefined;
+				} else {
+					i = empty.indexOf(prop);
+					index[index.length - 1] = empty[i + 1];
+				}
+				traverse();
+				return;
 			}
-			if (!Array.isArray(parent) && !lastProp) html('<div class="sc-spacer' + sc_hide + '"></div>');
 			nextProp();
 		}
 		traverse();
@@ -370,7 +383,7 @@ function create_settings(data, model) {
 			}
 			if (model_value) {
 				var model_keys = Object.keys(model_value);
-				model_keys = model_keys.filter(function (key) { return !!key.match(/^sc_/); });
+				model_keys = model_keys.filter(function (key) { return !key.match(/^sc_/); });
 				var extra_data = data_keys.reduce(function (a, v) { if (model_keys.indexOf(v) === -1) { a.push(v); } return a; }, []);
 				if (extra_data.length) console.warn('Config is missing ' + extra_data.join(', ') + ' from ' + index_path + '.');
 			}
@@ -675,7 +688,7 @@ function create_settings(data, model) {
 			if (item.matches('div.fieldset')) fieldsets = [item];
 			var els, id, prev;
 			for (j = 0; j < fieldsets.length; j += 1) {
-				els = fieldsets[j].querySelectorAll('input, select');
+				els = fieldsets[j].querySelectorAll('input, textarea, select');
 				for (k = 0; k < els.length; k += 1) {
 					// id
 					id = getId(els[k].dataset.key);
@@ -696,7 +709,7 @@ function create_settings(data, model) {
 	}
 
 	function clearValues(item) {
-		var inputs = item.querySelectorAll('input');
+		var inputs = item.querySelectorAll('input, textarea');
 		for (var i = 0; i < inputs.length; i += 1) {
 			inputs[i].value = '';
 		}
