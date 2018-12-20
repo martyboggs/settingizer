@@ -27,6 +27,7 @@ function create_settings(data, model) {
 	var gridCheck = 0;
 	var index_path;
 	var empty = false;
+	var parentIsEmptyArray;
 
 	var traverses = 0;
 
@@ -68,6 +69,7 @@ function create_settings(data, model) {
 		index_path = index_path ? '"' + index_path + '"' : 'the root object';
 
 		if (value === null) value = '';
+		parentIsEmptyArray = Array.isArray(parent) && parent.length === 0;
 
 		checkModel();
 		if (buildModel) {
@@ -79,6 +81,15 @@ function create_settings(data, model) {
 
 		var sc_hide = modelActive.sc_show === false ? ' sc-hide' : '';
 		var prop = index[index.length - 1];
+
+		if (parentIsEmptyArray) {
+			// only do if there are sc_keys?
+			// bypass closing the array, by replacing undefined with an object
+			// but don't overwrite sc_keys for the first one
+			parent[0] = parent[0] || {};
+			value = parent[0];
+			empty = true;
+		}
 
 		if (Array.isArray(value)) {
 			// console.log('array');
@@ -106,22 +117,11 @@ function create_settings(data, model) {
 				html('<div class="grid-row' + sc_hide + '">');
 			}
 
-			var val = value[0];
-
-			// allow empty arrays
-			if (value.length === 0) {
-				var first = getFirstObject();
-				if (first && first[0] && first[0].sc_keys) {
-					val = {};
-					empty = first[0].sc_keys;
-				}
-			}
-
 			index.push(0);
 			parent = value;
-			value = val;
+			value = value[0];
 
-		} else if (typeof value === 'object' && value) { // typeof null === 'object' :P
+		} else if (isObject(value)) {
 			// console.log('object');
 			var hide = Array.isArray(parent) && empty && !modelActive.sc_min ? ' style="display: none"' : '';
 			if (prop !== undefined && isNaN(prop) && modelActive.sc_label !== false) {
@@ -143,6 +143,9 @@ function create_settings(data, model) {
 
 		} else if (prop === undefined || (!isNaN(prop) && prop >= parent.length)) { // reached end of object/array
 			// console.log('end of sc_keys');
+
+			empty = false;
+
 			if (Array.isArray(parent) && modelActive.sc_add && gridCheck === 0) {
 				html('<div class="array-button"><button class="add-item sc-btn" type="button">Add item</button></div>');
 			}
@@ -166,7 +169,7 @@ function create_settings(data, model) {
 				value = value[index[i]];
 			}
 			// reset descriptions
-			if (!Array.isArray(parent) && typeof parent === 'object') descriptions = {};
+			if (isObject(parent)) descriptions = {};
 
 			var isLastProp = false;
 			if (!Array.isArray(parent)) {
@@ -209,7 +212,7 @@ function create_settings(data, model) {
 			var close_link = modelActive.sc_link && type !== 'button' ? '</a>' : '';
 			var disabled = empty && !modelActive.sc_min ? ' disabled' : '';
 			var isLastProp = false;
-			if (!Array.isArray(parent)) {
+			if (isObject(parent)) {
 				var obj = getFirstObjectParent();
 				isLastProp = obj.sc_keys.indexOf(prop) === obj.sc_keys.length - 1;
 			}
@@ -246,20 +249,20 @@ function create_settings(data, model) {
 				html(close_link);
 			html('</div>'); // close fieldset
 
-			if (!Array.isArray(parent) && !isLastProp) html('<div class="sc-spacer' + sc_hide + '"></div>');
+			if (isObject(parent) && !isLastProp) html('<div class="sc-spacer' + sc_hide + '"></div>');
 
 			// allow empty arrays
-			if (empty) {
-				if (isLastProp) {
-					empty = false;
-					index[index.length - 1] = undefined;
-				} else {
-					i = empty.indexOf(prop);
-					index[index.length - 1] = empty[i + 1];
-				}
-				traverse();
-				return;
-			}
+			// if (empty) {
+			// 	if (isLastProp) {
+			// 		empty = false;
+			// 		index[index.length - 1] = undefined;
+			// 	} else {
+			// 		i = empty.indexOf(prop);
+			// 		index[index.length - 1] = empty[i + 1];
+			// 	}
+			// 	traverse();
+			// 	return;
+			// }
 			nextProp();
 		}
 		traverse();
@@ -338,7 +341,7 @@ function create_settings(data, model) {
 
 		// find all unique props for this level
 		// don't need to ask "show" if object? "Show" is needed, since props in data, but not model need to be asked about
-		if (childrenOf0() && !Array.isArray(value) && typeof value === 'object') {
+		if (childrenOf0() && isObject(value)) {
 			// console.log('question', value);
 			var data_keys = getDataKeys();
 			var model_keys = [];
@@ -370,8 +373,19 @@ function create_settings(data, model) {
 	}
 
 	function warning() {
-		if (childrenOf0() && !Array.isArray(value) && typeof value === 'object') {
-			var data_keys = getDataKeys();
+		if (childrenOf0()) {
+			var data_keys = [];
+			if (isObject(value)) {
+				data_keys = getDataKeys();
+			} else if (Array.isArray(parent) && parent.length === 0 && value === undefined) {
+				// value = first element of empty array... undefined... so need to check parent in the undefined area
+				parent[0] = {};
+				data_keys = [];
+				value = parent[0];
+			} else {
+				return;
+			}
+
 			var model_value = model;
 			for (var i = 0; i < index.length; i += 1) {
 				if (model_value) {
@@ -706,6 +720,12 @@ function create_settings(data, model) {
 				}
 			}
 		}
+	}
+
+	function isObject(obj) {
+		// typeof null === 'object' :P
+		if (obj && !Array.isArray(obj) && typeof obj === 'object') return true;
+		return false;
 	}
 
 	function clearValues(item) {
