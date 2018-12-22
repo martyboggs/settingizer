@@ -626,14 +626,6 @@ function create_settings(data, model) {
 			}
 		});
 
-		function disableNameEls(el, bool) {
-			var fields = el.querySelectorAll('[name]');
-			if (fields.length === 0 && el.name) {
-				fields = [el];
-			}
-			fields.forEach(function (field) { field.disabled = bool; });
-		}
-
 		function draggable(el) {
 			var position = el.style.position;
 			var zIndex = el.style.zIndex;
@@ -689,6 +681,14 @@ function create_settings(data, model) {
 		return false;
 	}
 
+	function disableNameEls(el, bool) {
+		var fields = el.querySelectorAll('[name]');
+		if (fields.length === 0 && el.name) {
+			fields = [el];
+		}
+		fields.forEach(function (field) { field.disabled = bool; });
+	}
+
 	function fixAtts(itemOrItems, key) { // updates id, for, name
 		var i, j, k;
 		var item, fieldsets;
@@ -729,13 +729,30 @@ function create_settings(data, model) {
 	}
 
 	function clearValues(item) {
+		var i, j;
 		var inputs = item.querySelectorAll('input, textarea');
-		for (var i = 0; i < inputs.length; i += 1) {
+		for (i = 0; i < inputs.length; i += 1) {
 			inputs[i].value = '';
 		}
 		var selects = item.querySelectorAll('select');
-		for (var i = 0; i < selects.length; i += 1) {
+		for (i = 0; i < selects.length; i += 1) {
 			selects[i].selectedIndex = 0;
+		}
+		var arrays = item.querySelectorAll('.array-group');
+		var items;
+		for (i = 0; i < arrays.length; i += 1) {
+			if (arrays[i].className && arrays[i].className.indexOf('grid') !== -1) continue;
+			items = arrays[i].childNodes;
+			for (j = 0; j < items.length; j += 1) {
+				if (items[j].className && items[j].className.indexOf('array-button') !== -1) continue;
+				if (j === 0) {
+					items[j].style.display = 'none';
+					disableNameEls(items[j], true);
+				} else {
+					arrays[i].removeChild(items[j]);
+					j -= 1;
+				}
+			}
 		}
 	}
 
