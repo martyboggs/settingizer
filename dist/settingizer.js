@@ -224,24 +224,24 @@ function create_settings(data, model) {
 				html(open_link);
 					var option = '';
 					if (type === 'textarea') {
-						html('<div><textarea rows="5"' + idAtt + key + name + placeholder + readonly + required + disabled + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea></div>');
+						html('<div><textarea rows="5"' + idAtt + key + name + placeholder + readonly + required + disabled + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea>' + description + '</div>');
 					} else if (type === 'select') {
 						option += '<div><select' + idAtt + key + name + required + disabled +'>';
 						option += modelActive.sc_options.reduce(function (a, v) { return a + '<option value="' + v + '"' + (val === v ? ' selected' : '') + '>' + capitalize(v) + '</option>'; }, '');
-						option += '</select></div>';
+						option += '</select>' + description + '</div>';
 						html(option);
 					} else if (type === 'radios' || type === 'buttons') {
 						option += '<div>';
 						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="radioset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '"' + key + name + required + disabled + ' value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
-						option += '</div>';
+						option += description + '</div>';
 						html(option);
 					} else if (type === 'button') {
 						var button_text = modelActive.sc_button_text;
 						if (!button_text) button_text = capitalize(prop);
 						if (url) {
-							html('<div><a class="sc-btn" href="' + url + '">' + button_text + '</a></div>');
+							html('<div><a class="sc-btn" href="' + url + '">' + button_text + '</a>' + description + '</div>');
 						} else {
-							html('<div><button type="button" class="sc-btn">' + button_text + '</button></div>');
+							html('<div><button type="button" class="sc-btn">' + button_text + '</button>' + description + '</div>');
 						}
 					} else {
 						html('<div><input type="' + type + '"' + idAtt + key + name + placeholder + readonly + required + disabled + ' value="' + val + '"' + (value === 'on' || value === true ? ' checked' : '') + ' />' + description + '</div>');
