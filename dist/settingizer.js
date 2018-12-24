@@ -10,7 +10,9 @@ function create_settings(data, model) {
 
 	// todo: simple array delete button
 	// todo: warning shows for children of sc_show: false
-	// todo: classname undefined
+	// todo: remove classname undefined
+	// todo: remove classname with indexes
+	// todo: when add-item, generate href from sc_link
 
 	// restrictions: no [ ] allowed in key names
 
@@ -28,6 +30,7 @@ function create_settings(data, model) {
 	var index_path;
 	var empty = false;
 	var parentIsEmptyArray;
+	var sc_keys;
 
 	var traverses = 0;
 
@@ -46,7 +49,7 @@ function create_settings(data, model) {
 
 	if (buildModel) {
 		// clean model
-		form.innerHTML = '<p class="sc-message">Success! Your model has been generated.<br>Use it as the second argument for create_settings(obj, model).</p><textarea class="config" style="margin: 10px; max-width: none; width: calc(100% - 20px);"></textarea>' + form.innerHTML;
+		form.innerHTML = '<p class="sc-message">Success! Your model has been generated.<br>Use it as the second argument for create_settings(obj, model).</p><textarea class="config" style="margin: 5px; max-width: none; width: calc(100% - 10px);"></textarea>' + form.innerHTML;
 		var configEl = form.querySelector('.config');
 		if (configEl) {
 			configEl.innerHTML = JSON.stringify(model, false, 4);
@@ -72,12 +75,9 @@ function create_settings(data, model) {
 		parentIsEmptyArray = Array.isArray(parent) && parent.length === 0;
 
 		checkModel();
-		if (buildModel) {
-			questions();
-			checkModel();
-		} else {
-			warning();
-		}
+		if (buildModel) questions();
+		getScKeys();
+		checkModel();
 
 		var sc_hide = modelActive.sc_show === false ? ' sc-hide' : '';
 		var prop = index[index.length - 1];
@@ -90,6 +90,8 @@ function create_settings(data, model) {
 			value = parent[0];
 			empty = true;
 		}
+
+		// console.log('index:', index, 'sc_keys:', sc_keys ? sc_keys.length : 0, 'parent:', typeof parent, 'value:', typeof value);
 
 		if (Array.isArray(value)) {
 			// console.log('array');
@@ -107,7 +109,7 @@ function create_settings(data, model) {
 
 			// if array has as many arrays of the same length
 			if (gridCheck === 0) {
-				if (modelActive.sc_grid) {
+				if (modelActive.sc_type && modelActive.sc_type === 'grid') {
 					gridCheck = value.length;
 					html('<div class="grid array-group' + sc_hide + ' ' + prop + '-group"' + name + min + '>');
 				} else {
@@ -117,6 +119,7 @@ function create_settings(data, model) {
 				html('<div class="grid-row' + sc_hide + '">');
 			}
 
+			// down a level
 			index.push(0);
 			parent = value;
 			value = value[0];
@@ -134,8 +137,8 @@ function create_settings(data, model) {
 				html('<div class="sc-header"><div class="order-buttons">' + orderButtons + '</div>' + deleteButton + '</div><div class="sc-spacer"></div>');
 			}
 
-			var all_keys = getFirstObject().sc_keys;
-			index.push(all_keys ? all_keys[0] : undefined);
+			// down a level
+			index.push(sc_keys ? sc_keys[0] : undefined);
 			parent = value;
 			value = value[index[index.length - 1]];
 
@@ -162,26 +165,27 @@ function create_settings(data, model) {
 				done();
 				return; // kill it
 			}
-			index.pop(); // up a level
+			// up a level
+			index.pop();
 			value = data;
 			for (var i = 0; i < index.length; i += 1) {
 				parent = value;
 				value = value[index[i]];
 			}
+
+			// reset sc_keys
+			getParentScKeys();
 			// reset descriptions
 			if (isObject(parent)) descriptions = {};
 
-			var isLastProp = false;
-			if (!Array.isArray(parent)) {
-				var obj = getFirstObjectParent();
-				isLastProp = obj.sc_keys.indexOf(index[index.length - 1]) === obj.sc_keys.length - 1;
-			}
+			var isLastProp = sc_keys.indexOf(index[index.length - 1]) === sc_keys.length - 1;
 			if (!Array.isArray(parent) && !isLastProp) html('<div class="sc-spacer' + sc_hide + '"></div>');
 			nextProp();
 
 		} else {
 			// console.log('new fieldset');
 			var type = modelActive.sc_type || 'text';
+			if (type === 'grid') type = 'text';
 			if (type === 'text') {
 				if (value && value.toString().match(/^#?[a-fA-F0-9]{6}$/)) {
 					type = 'color';
@@ -211,11 +215,7 @@ function create_settings(data, model) {
 			var open_link = modelActive.sc_link && type !== 'button' ? '<a href="' + url + '">' : '';
 			var close_link = modelActive.sc_link && type !== 'button' ? '</a>' : '';
 			var disabled = empty && !modelActive.sc_min ? ' disabled' : '';
-			var isLastProp = false;
-			if (isObject(parent)) {
-				var obj = getFirstObjectParent();
-				isLastProp = obj.sc_keys.indexOf(prop) === obj.sc_keys.length - 1;
-			}
+			var isLastProp = isObject(parent) && sc_keys.indexOf(prop) === sc_keys.length - 1;
 
 			html('<div class="fieldset' + sc_hide + ' ' + className + '">');
 				// label
@@ -250,19 +250,6 @@ function create_settings(data, model) {
 			html('</div>'); // close fieldset
 
 			if (isObject(parent) && !isLastProp) html('<div class="sc-spacer' + sc_hide + '"></div>');
-
-			// allow empty arrays
-			// if (empty) {
-			// 	if (isLastProp) {
-			// 		empty = false;
-			// 		index[index.length - 1] = undefined;
-			// 	} else {
-			// 		i = empty.indexOf(prop);
-			// 		index[index.length - 1] = empty[i + 1];
-			// 	}
-			// 	traverse();
-			// 	return;
-			// }
 			nextProp();
 		}
 		traverse();
@@ -272,9 +259,8 @@ function create_settings(data, model) {
 		if (Array.isArray(parent)) {
 			index[index.length - 1] += 1;
 		} else {
-			var obj = getFirstObjectParent();
-			var i = obj.sc_keys.indexOf(index[index.length - 1]);
-			index[index.length - 1] = obj.sc_keys[i + 1];
+			var i = sc_keys.indexOf(index[index.length - 1]);
+			index[index.length - 1] = sc_keys[i + 1];
 		}
 
 		// todo: delete sc_keys if done? could use original object
@@ -325,12 +311,13 @@ function create_settings(data, model) {
 						}
 						if (Array.isArray(value)) {
 							// todo: check that values are primitives
-							grid = value.reduce(function (a, v) { return a && Array.isArray(v) && v.length === value.length; }, true);
+							console.log('thing', value);
+							grid = value.length > 0 && value.every(function (v) { return Array.isArray(v) && v.length > 0 && v.every(function (v) { return typeof v !== 'object'; }); });
 							if (grid) {
 								var active = questionGetParent();
 								active['sc_type'] = confirm('Format ' + index_path + ' as grid?') ? 'grid' : '';
 								active['sc_add'] = confirm('Allow adding more ' + index_path + '?');
-							} else if (!modelActive.sc_grid) {
+							} else if (!modelActive.sc_type || modelActive.sc_type !== 'grid') {
 								questionGetParent()['sc_add'] = confirm('Allow adding more ' + index_path + '?');
 							}
 						}
@@ -338,15 +325,31 @@ function create_settings(data, model) {
 				}
 			}
 		}
+	}
 
+	function getScKeys() {
 		// find all unique props for this level
 		// don't need to ask "show" if object? "Show" is needed, since props in data, but not model need to be asked about
-		if (childrenOf0() && isObject(value)) {
-			// console.log('question', value);
-			var data_keys = getDataKeys();
-			var model_keys = [];
+		var doIt = isObject(value) || (Array.isArray(parent) && parent.length === 0 && value === undefined);
+		if (!doIt) return;
 
-			if (show) {
+		var isChildOf0 = childrenOf0(index);
+		var data_keys = [];
+		var model_keys = [];
+
+		// todo: add if (show) to some places here
+
+		// data_keys
+		if (isObject(value)) {
+			data_keys = getDataKeys(parent, value);
+		} else if (Array.isArray(parent) && parent.length === 0 && value === undefined) { // array element = undefined
+			parent[0] = {};
+			value = parent[0];
+		}
+
+		// model_keys
+		if (buildModel) {
+			if (isChildOf0) {
 				var keyStr = prompt('Enter all the available keys for ' + index_path + ' in the order you want them.', data_keys.join(','));
 				// todo: support hiding keys if they are removed from this list
 				if (keyStr) {
@@ -368,30 +371,13 @@ function create_settings(data, model) {
 					}
 				}
 			}
-			value.sc_keys = concatUnique(model_keys, data_keys);
-		}
-	}
-
-	function warning() {
-		if (childrenOf0()) {
-			var data_keys = [];
-			if (isObject(value)) {
-				data_keys = getDataKeys();
-			} else if (Array.isArray(parent) && parent.length === 0 && value === undefined) {
-				// value = first element of empty array... undefined... so need to check parent in the undefined area
-				parent[0] = {};
-				data_keys = [];
-				value = parent[0];
-			} else {
-				return;
-			}
-
+		} else {
 			var model_value = model;
 			for (var i = 0; i < index.length; i += 1) {
 				if (model_value) {
-					model_value = model_value[index[i]];
+					model_value = model_value[isNaN(index[i]) ? index[i] : 0];
 				} else {
-					console.warn('Config is missing all the keys for ' + index_path);
+					if (isChildOf0) console.warn('Config is missing all the keys for ' + index_path);
 					break;
 				}
 			}
@@ -399,13 +385,44 @@ function create_settings(data, model) {
 				var model_keys = Object.keys(model_value);
 				model_keys = model_keys.filter(function (key) { return !key.match(/^sc_/); });
 				var extra_data = data_keys.reduce(function (a, v) { if (model_keys.indexOf(v) === -1) { a.push(v); } return a; }, []);
-				if (extra_data.length) console.warn('Config is missing ' + extra_data.join(', ') + ' from ' + index_path + '.');
+				if (isChildOf0 && extra_data.length) console.warn('Config is missing ' + extra_data.join(', ') + ' from ' + index_path + '.');
 			}
-			value.sc_keys = concatUnique(model_keys, data_keys);
 		}
+
+		sc_keys = concatUnique(model_keys, data_keys);
+	}
+
+	function getParentScKeys() {
+		// refresh sc_keys when going up a level
+
+		// needs to based on value and model
+		if (!isObject(parent)) return;
+
+		var grandparent = data;
+		for (var i = 0; i < index.slice(0, -2).length; i += 1) {
+			grandparent = grandparent[index[i]];
+		}
+		var data_keys = getDataKeys(grandparent, parent);
+		var model_keys = [];
+
+		var model_value = model;
+		for (var i = 0; i < index.slice(0, -1).length; i += 1) {
+			if (model_value) {
+				model_value = model_value[isNaN(index[i]) ? index[i] : 0];
+			} else {
+				break;
+			}
+		}
+
+		if (model_value) {
+			var model_keys = Object.keys(model_value);
+			model_keys = model_keys.filter(function (key) { return !key.match(/^sc_/); });
+		}
+		sc_keys = concatUnique(model_keys, data_keys);
 	}
 
 	function questionGetParent() {
+		//  builds the model recursively
 		var option = model;
 		for (var i = 0; i < index.length; i += 1) {
 			if (option[index[i]] === undefined) {
@@ -416,24 +433,10 @@ function create_settings(data, model) {
 		return option;
 	}
 
-	function getFirstObject() {
-		var val = data;
-		for (var i = 0; i < index.length; i += 1) {
-			val = val[isNaN(index[i]) ? index[i] : 0];
-		}
-		return val;
-	}
-
-	function getFirstObjectParent() {
-		var val = data;
-		for (var i = 0; i < index.length - 1; i += 1) {
-			val = val[isNaN(index[i]) ? index[i] : 0];
-		}
-		return val;
-	}
-
-	function getDataKeys() {
+	function getDataKeys(parent, value) {
+		// gets all data keys including those from sibling elements
 		var keys = [];
+		// todo: iterates through parent Array but not EVERY ancestor array
 		if (Array.isArray(parent)) {
 			var arr = parent.reduce(function (a, v) { a.push(Object.keys(v)); return a; }, []);
 			for (var i = 0; i < arr.length; i += 1) {
@@ -490,7 +493,7 @@ function create_settings(data, model) {
 		return true;
 	}
 
-	function childrenOf0() {
+	function childrenOf0(index) {
 		// false: if any indexes are num and not 0
 		for (var i = 0; i < index.length; i += 1) {
 			if (!isNaN(index[i]) && (index[i] !== 0)) {

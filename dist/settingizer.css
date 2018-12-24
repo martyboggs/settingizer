@@ -194,6 +194,9 @@
 	align-self: flex-start;
 }
 .settingizer .grid-buttons label {
+	padding: 5px 10px 5px 0;
+}
+.settingizer .grid-buttons label {
 	min-width: 0;
 }
 
