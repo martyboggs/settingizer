@@ -13,6 +13,7 @@ function create_settings(data, model) {
 	// todo: remove classname undefined
 	// todo: remove classname with indexes
 	// todo: when add-item, generate href from sc_link
+	// todo: check if data has primitive value where model says an object should be
 
 	// restrictions: no [ ] allowed in key names
 
@@ -23,6 +24,8 @@ function create_settings(data, model) {
 	var value = data;
 	var buildModel = !model;
 	var model = model || {};
+	var modelValue = model;
+	var modelParent = model;
 	var modelActive = {};
 	var ids = ['array', 'object', 'grid', 'grid-row', 'sc-btn'];
 	var descriptions = {};
@@ -31,6 +34,8 @@ function create_settings(data, model) {
 	var empty = false;
 	var parentIsEmptyArray;
 	var sc_keys;
+	var data_keys = [];
+	var model_keys = [];
 
 	var traverses = 0;
 
@@ -63,10 +68,7 @@ function create_settings(data, model) {
 	function traverse() {
 		traverses += 1;
 		if (traverses > 5000) return;
-		// console.log(traverses);
-		// console.log('index: ', index);
-		// console.log('value: ', value);
-		// console.log('parent: ', parent);
+		console.log(traverses);
 
 		index_path = index.reduce(function (p, c) { return p ? p + '->' + c : c; }, '');
 		index_path = index_path ? '"' + index_path + '"' : 'the root object';
@@ -74,10 +76,43 @@ function create_settings(data, model) {
 		if (value === null) value = '';
 		parentIsEmptyArray = Array.isArray(parent) && parent.length === 0;
 
+		// data_keys
+		if (isObject(value)) {
+			data_keys = getDataKeys(parent, value);
+		} else if (Array.isArray(parent) && parent.length === 0 && value === undefined) { // array element = undefined
+			parent[0] = {};
+			value = parent[0];
+		}
+
 		checkModel();
 		if (buildModel) questions();
-		getScKeys();
 		checkModel();
+
+		// if value is undefined, check model
+		if (firstChild(index) && value === undefined) {
+			var modelValue = model;
+			for (var i = 0; i < index.length; i += 1) {
+				if (modelValue) {
+					modelValue = modelValue[isNaN(index[i]) ? index[i] : 0];
+					if (i === index.length - 1 && modelValue) {
+						if (isNaN(index[i])) {
+							parent = modelParent;
+						} else {
+							parent = [];
+						}
+						var modelValueKeys = Object.keys(modelValue);
+						if (modelValueKeys.length === 0) {
+							value = '';
+						} else if (modelValueKeys.some(function (v) { return !v.match(/^sc_/); })) { // there's at least one valid key
+							value = {};
+						}
+						console.log('changed modelvalue:', modelValue, 'value:', value);
+					}
+				}
+			}
+		}
+
+		getScKeys();
 
 		var sc_hide = modelActive.sc_show === false ? ' sc-hide' : '';
 		var prop = index[index.length - 1];
@@ -91,7 +126,7 @@ function create_settings(data, model) {
 			empty = true;
 		}
 
-		// console.log('index:', index, 'sc_keys:', sc_keys ? sc_keys.length : 0, 'parent:', typeof parent, 'value:', typeof value);
+		console.log('index:', index, 'sc_keys:', sc_keys, 'parent:', parent, 'value:', value);
 
 		if (Array.isArray(value)) {
 			// console.log('array');
@@ -168,9 +203,18 @@ function create_settings(data, model) {
 			// up a level
 			index.pop();
 			value = data;
+			modelValue = model;
 			for (var i = 0; i < index.length; i += 1) {
-				parent = value;
-				value = value[index[i]];
+				if (value) {
+					parent = value;
+					value = value[index[i]];
+				}
+				if (modelValue) {
+					modelValue = modelValue[isNaN(index[i]) ? index[i] : 0];
+					if (i === index.length - 1 && modelValue && !value) {
+						value = modelValue;
+					}
+				}
 			}
 
 			// reset sc_keys
@@ -263,12 +307,13 @@ function create_settings(data, model) {
 			index[index.length - 1] = sc_keys[i + 1];
 		}
 
-		// todo: delete sc_keys if done? could use original object
 
-		value = data; // reset value before traversing
+		value = data;
 		for (var i = 0; i < index.length; i += 1) {
-			parent = value;
-			value = value[index[i]];
+			if (value) {
+				parent = value;
+				value = value[index[i]];
+			}
 		}
 	}
 
@@ -325,31 +370,10 @@ function create_settings(data, model) {
 				}
 			}
 		}
-	}
 
-	function getScKeys() {
-		// find all unique props for this level
-		// don't need to ask "show" if object? "Show" is needed, since props in data, but not model need to be asked about
-		var doIt = isObject(value) || (Array.isArray(parent) && parent.length === 0 && value === undefined);
-		if (!doIt) return;
-
-		var isChildOf0 = childrenOf0(index);
-		var data_keys = [];
-		var model_keys = [];
-
-		// todo: add if (show) to some places here
-
-		// data_keys
-		if (isObject(value)) {
-			data_keys = getDataKeys(parent, value);
-		} else if (Array.isArray(parent) && parent.length === 0 && value === undefined) { // array element = undefined
-			parent[0] = {};
-			value = parent[0];
-		}
-
-		// model_keys
-		if (buildModel) {
-			if (isChildOf0) {
+		// get model_value
+		if (isObject(value) || (Array.isArray(parent) && parent.length === 0 && value === undefined)) {
+			if (childrenOf0(index)) {
 				var keyStr = prompt('Enter all the available keys for ' + index_path + ' in the order you want them.', data_keys.join(','));
 				// todo: support hiding keys if they are removed from this list
 				if (keyStr) {
@@ -371,6 +395,21 @@ function create_settings(data, model) {
 					}
 				}
 			}
+		}
+	}
+
+	function getScKeys() {
+		// find all unique props for this level
+		// don't need to ask "show" if object? "Show" is needed, since props in data, but not model need to be asked about
+		if (!isObject(value)) return;
+
+		var isChildOf0 = childrenOf0(index);
+
+		// todo: add if (show) to some places here
+
+		// model_keys
+		if (buildModel) {
+			// got model_value in questions()
 		} else {
 			var model_value = model;
 			for (var i = 0; i < index.length; i += 1) {
@@ -399,8 +438,15 @@ function create_settings(data, model) {
 		if (!isObject(parent)) return;
 
 		var grandparent = data;
+		var modelGrandparent = model;
 		for (var i = 0; i < index.slice(0, -2).length; i += 1) {
-			grandparent = grandparent[index[i]];
+			if (grandparent) {
+				grandparent = grandparent[index[i]];
+			}
+			if (modelGrandparent) {
+				modelGrandparent = modelGrandparent[isNaN(index[i]) ? index[i] : 0];
+				if (i === index.length - 1 && modelGrandparent) grandparent = modelGrandparent;
+			}
 		}
 		var data_keys = getDataKeys(grandparent, parent);
 		var model_keys = [];
@@ -483,8 +529,7 @@ function create_settings(data, model) {
 		}
 	}
 
-	function childrenOf0NoItem() {
-		// false: if any indexes are num and (not 0 or 0 at the end will fail)
+	function childrenOf0NoItem() { // false: if any indexes are num and (not 0 or 0 at the end will fail)
 		for (var i = 0; i < index.length; i += 1) {
 			if (!isNaN(index[i]) && (index[i] !== 0 || (index[i] === 0 && i === index.length - 1))) {
 				return false;
@@ -493,14 +538,22 @@ function create_settings(data, model) {
 		return true;
 	}
 
-	function childrenOf0(index) {
-		// false: if any indexes are num and not 0
+	function childrenOf0(index) { // false: if any indexes are num and not 0
 		for (var i = 0; i < index.length; i += 1) {
 			if (!isNaN(index[i]) && (index[i] !== 0)) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	function firstChild(index) { // true if last index is 0
+		for (var i = index.length - 1; i >= 0; i -= 1) {
+			if (!isNaN(index[i])) {
+				return index[i] === 0;
+			}
+		}
+		return false;
 	}
 
 	function capitalize(string) {
