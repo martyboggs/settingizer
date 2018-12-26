@@ -24,20 +24,19 @@ function create_settings(data, model) {
 	var value = data;
 	var buildModel = !model;
 	var model = model || {};
-	var modelValue = model;
-	var modelParent = model;
 	var modelActive = {};
 	var ids = ['array', 'object', 'grid', 'grid-row', 'sc-btn'];
 	var descriptions = {};
 	var gridCheck = 0;
 	var index_path;
 	var empty = false;
-	var parentIsEmptyArray;
 	var sc_keys;
 	var data_keys = [];
 	var model_keys = [];
 
 	var traverses = 0;
+
+	// parent only used for checking type
 
 	var el;
 	el = document.getElementsByClassName('settingizer')[0];
@@ -74,63 +73,64 @@ function create_settings(data, model) {
 		index_path = index_path ? '"' + index_path + '"' : 'the root object';
 
 		if (value === null) value = '';
-		parentIsEmptyArray = Array.isArray(parent) && parent.length === 0;
 
-		// data_keys
-		if (isObject(value)) {
-			data_keys = getDataKeys(parent, value);
-		} else if (Array.isArray(parent) && parent.length === 0 && value === undefined) { // array element = undefined
-			parent[0] = {};
-			value = parent[0];
-		}
-
-		checkModel();
-		if (buildModel) questions();
-		checkModel();
+		var prop = index[index.length - 1];
 
 		// if value is undefined, check model
-		if (firstChild(index) && value === undefined) {
+		if (prop !== undefined && firstChild(index) && value === undefined) {
 			var modelValue = model;
 			for (var i = 0; i < index.length; i += 1) {
 				if (modelValue) {
 					modelValue = modelValue[isNaN(index[i]) ? index[i] : 0];
 					if (i === index.length - 1 && modelValue) {
 						if (isNaN(index[i])) {
-							parent = modelParent;
+							parent = {};
 						} else {
+							// empty = true;
 							parent = [];
 						}
+						if (!isObject(modelValue)) { console.error('config must be all nested objects'); }
 						var modelValueKeys = Object.keys(modelValue);
+						modelValueKeys = modelValueKeys.filter(function (key) { return !key.match(/^sc_/); });
 						if (modelValueKeys.length === 0) {
 							value = '';
+						} else if (modelValueKeys[0] === '0') {
+							value = [];
 						} else if (modelValueKeys.some(function (v) { return !v.match(/^sc_/); })) { // there's at least one valid key
 							value = {};
 						}
-						console.log('changed modelvalue:', modelValue, 'value:', value);
 					}
 				}
 			}
 		}
 
-		getScKeys();
+		// data_keys
+		if (isObject(value)) {
+			data_keys = getDataKeys(index);
+		// } else if (Array.isArray(parent) && parent.length === 0 && value === undefined) { // array element = undefined
+		// 	parent[0] = {};
+		// 	value = parent[0];
+		}
+
+// need value from model for getting data_keys
+// need datakeys for questions
+
+		checkModel();
+		if (buildModel) questions();
+		checkModel();
 
 		var sc_hide = modelActive.sc_show === false ? ' sc-hide' : '';
-		var prop = index[index.length - 1];
+		// console.log('prop', prop);
 
-		if (parentIsEmptyArray) {
-			// only do if there are sc_keys?
-			// bypass closing the array, by replacing undefined with an object
-			// but don't overwrite sc_keys for the first one
-			parent[0] = parent[0] || {};
-			value = parent[0];
-			empty = true;
+		if (isObject(value)) {
+			getScKeys();
 		}
 
 		console.log('index:', index, 'sc_keys:', sc_keys, 'parent:', parent, 'value:', value);
 
 		if (Array.isArray(value)) {
 			// console.log('array');
-			if (prop !== undefined && isNaN(prop) && modelActive.sc_label) {
+			if (prop !== undefined && isNaN(prop) && (modelActive.sc_label || modelActive.sc_label === undefined)) {
 				html('<label class="fieldset' + sc_hide + ' ' + prop + '-label">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
 			}
 
@@ -162,7 +162,7 @@ function create_settings(data, model) {
 		} else if (isObject(value)) {
 			// console.log('object');
 			var hide = Array.isArray(parent) && empty && !modelActive.sc_min ? ' style="display: none"' : '';
-			if (prop !== undefined && isNaN(prop) && modelActive.sc_label !== false) {
+			if (prop !== undefined && isNaN(prop) && (modelActive.sc_label || modelActive.sc_label === undefined)) {
 				html('<label class="fieldset' + sc_hide + ' ' + prop + '-label">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
 			}
 			html('<div class="object-group' + sc_hide + (' ' + prop) + '-group"' + hide + '>');
@@ -200,27 +200,28 @@ function create_settings(data, model) {
 				done();
 				return; // kill it
 			}
+
 			// up a level
 			index.pop();
 			value = data;
-			modelValue = model;
 			for (var i = 0; i < index.length; i += 1) {
-				if (value) {
-					parent = value;
-					value = value[index[i]];
-				}
-				if (modelValue) {
-					modelValue = modelValue[isNaN(index[i]) ? index[i] : 0];
-					if (i === index.length - 1 && modelValue && !value) {
-						value = modelValue;
-					}
-				}
+				parent = value;
+				value = value ? value[index[i]] : undefined;
 			}
 
-			// reset sc_keys
-			getParentScKeys();
+			if (isNaN(index[index.length - 1])) {
+				parent = {};
+			} else {
+				parent = [];
+				sc_keys = [];
+			}
+			console.log('wu', parent, index);
+
 			// reset descriptions
-			if (isObject(parent)) descriptions = {};
+			if (isObject(parent)) {
+				getParentScKeys();
+				descriptions = {};
+			}
 
 			var isLastProp = sc_keys.indexOf(index[index.length - 1]) === sc_keys.length - 1;
 			if (!Array.isArray(parent) && !isLastProp) html('<div class="sc-spacer' + sc_hide + '"></div>');
@@ -307,7 +308,6 @@ function create_settings(data, model) {
 			index[index.length - 1] = sc_keys[i + 1];
 		}
 
-
 		value = data;
 		for (var i = 0; i < index.length; i += 1) {
 			if (value) {
@@ -356,7 +356,6 @@ function create_settings(data, model) {
 						}
 						if (Array.isArray(value)) {
 							// todo: check that values are primitives
-							console.log('thing', value);
 							grid = value.length > 0 && value.every(function (v) { return Array.isArray(v) && v.length > 0 && v.every(function (v) { return typeof v !== 'object'; }); });
 							if (grid) {
 								var active = questionGetParent();
@@ -401,8 +400,6 @@ function create_settings(data, model) {
 	function getScKeys() {
 		// find all unique props for this level
 		// don't need to ask "show" if object? "Show" is needed, since props in data, but not model need to be asked about
-		if (!isObject(value)) return;
-
 		var isChildOf0 = childrenOf0(index);
 
 		// todo: add if (show) to some places here
@@ -427,28 +424,14 @@ function create_settings(data, model) {
 				if (isChildOf0 && extra_data.length) console.warn('Config is missing ' + extra_data.join(', ') + ' from ' + index_path + '.');
 			}
 		}
-
 		sc_keys = concatUnique(model_keys, data_keys);
 	}
 
 	function getParentScKeys() {
 		// refresh sc_keys when going up a level
-
 		// needs to based on value and model
-		if (!isObject(parent)) return;
 
-		var grandparent = data;
-		var modelGrandparent = model;
-		for (var i = 0; i < index.slice(0, -2).length; i += 1) {
-			if (grandparent) {
-				grandparent = grandparent[index[i]];
-			}
-			if (modelGrandparent) {
-				modelGrandparent = modelGrandparent[isNaN(index[i]) ? index[i] : 0];
-				if (i === index.length - 1 && modelGrandparent) grandparent = modelGrandparent;
-			}
-		}
-		var data_keys = getDataKeys(grandparent, parent);
+		var data_keys = getDataKeys(index.slice(0, -1));
 		var model_keys = [];
 
 		var model_value = model;
@@ -465,6 +448,7 @@ function create_settings(data, model) {
 			model_keys = model_keys.filter(function (key) { return !key.match(/^sc_/); });
 		}
 		sc_keys = concatUnique(model_keys, data_keys);
+		console.log('getparentsckeys', index, sc_keys);
 	}
 
 	function questionGetParent() {
@@ -479,21 +463,50 @@ function create_settings(data, model) {
 		return option;
 	}
 
-	function getDataKeys(parent, value) {
-		// gets all data keys including those from sibling elements
+	function getDataKeys(index) {
+		// gets all data keys including those from sibling/cousin elements
+		var value = data;
 		var keys = [];
-		// todo: iterates through parent Array but not EVERY ancestor array
-		if (Array.isArray(parent)) {
-			var arr = parent.reduce(function (a, v) { a.push(Object.keys(v)); return a; }, []);
-			for (var i = 0; i < arr.length; i += 1) {
-				for (var j = 0; j < arr[i].length; j += 1) {
-					if (keys.indexOf(arr[i][j]) === -1) {
-						keys.push(arr[i][j]);
-					}
+		for (var i = 0; i < index.length; i += 1) {
+			if (value) {
+				value = value[index[i]];
+				if (i === index.length - 1 && value) {
+					keys = Object.keys(value);
 				}
 			}
-		} else {
-			keys = Object.keys(value);
+		}
+		var otherIndex = index.concat();
+		var otherValue;
+		var distance;
+		var nextDistance = 0;
+		if (index.length === 0) return keys;
+
+		while (1) {
+			for (var i = 0; i < otherIndex.length; i += 1) {
+				if (i >= nextDistance && !isNaN(otherIndex[i])) {
+					otherIndex[i] += 1;
+					distance = i;
+					break;
+				} else {
+					return keys;
+				}
+			}
+
+			otherValue = data;
+			for (var i = 0; i < otherIndex.length; i += 1) {
+				if (otherValue) {
+					otherValue = otherValue[otherIndex[i]];
+					if (i === otherIndex.length - 1 && otherValue) {
+						keys = concatUnique(keys, Object.keys(otherValue));
+					}
+				} else {
+					if (i === distance + 1) {
+						otherIndex[distance] = 0;
+						nextDistance = distance + 1;
+					}
+					break;
+				}
+			}
 		}
 		return keys;
 	}
@@ -553,7 +566,7 @@ function create_settings(data, model) {
 				return index[i] === 0;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	function capitalize(string) {

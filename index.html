@@ -491,10 +491,10 @@ var oldSizeChartData = [{"id":"d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb","title":"ba
 var empty = {"buttonPlacement":"above-add-to-cart","buttonIcon":"none","buttonText":"Doin itd5","currentPlan":"Premium Plan"};
 
 	var data = oldSizeChartData;
-	var useData = false;
+	var useData = true;
 // sizeChartData asked about undefined??
-	create_settings(data, useData ? {
-		"charts": {
+	create_settings(empty, useData ? {
+	"charts": {
 		"0": {
 			"id": {
 				"sc_show": false
