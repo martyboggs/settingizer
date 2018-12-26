@@ -67,7 +67,7 @@ function create_settings(data, model) {
 	function traverse() {
 		traverses += 1;
 		if (traverses > 5000) return;
-		console.log(traverses);
+		// console.log(traverses);
 
 		index_path = index.reduce(function (p, c) { return p ? p + '->' + c : c; }, '');
 		index_path = index_path ? '"' + index_path + '"' : 'the root object';
@@ -86,7 +86,7 @@ function create_settings(data, model) {
 						if (isNaN(index[i])) {
 							parent = {};
 						} else {
-							// empty = true;
+							empty = true;
 							parent = [];
 						}
 						if (!isObject(modelValue)) { console.error('config must be all nested objects'); }
@@ -107,9 +107,6 @@ function create_settings(data, model) {
 		// data_keys
 		if (isObject(value)) {
 			data_keys = getDataKeys(index);
-		// } else if (Array.isArray(parent) && parent.length === 0 && value === undefined) { // array element = undefined
-		// 	parent[0] = {};
-		// 	value = parent[0];
 		}
 
 // need value from model for getting data_keys
@@ -126,7 +123,7 @@ function create_settings(data, model) {
 			getScKeys();
 		}
 
-		console.log('index:', index, 'sc_keys:', sc_keys, 'parent:', parent, 'value:', value);
+		// console.log('index:', index, 'sc_keys:', sc_keys, 'parent:', parent, 'value:', value);
 
 		if (Array.isArray(value)) {
 			// console.log('array');
@@ -215,7 +212,6 @@ function create_settings(data, model) {
 				parent = [];
 				sc_keys = [];
 			}
-			console.log('wu', parent, index);
 
 			// reset descriptions
 			if (isObject(parent)) {
@@ -313,6 +309,10 @@ function create_settings(data, model) {
 			if (value) {
 				parent = value;
 				value = value[index[i]];
+			} else {
+				parent = isNaN(index[index.length - 1]) ? {} : [];
+				value = undefined;
+				break;
 			}
 		}
 	}
@@ -448,7 +448,6 @@ function create_settings(data, model) {
 			model_keys = model_keys.filter(function (key) { return !key.match(/^sc_/); });
 		}
 		sc_keys = concatUnique(model_keys, data_keys);
-		console.log('getparentsckeys', index, sc_keys);
 	}
 
 	function questionGetParent() {
@@ -467,6 +466,12 @@ function create_settings(data, model) {
 		// gets all data keys including those from sibling/cousin elements
 		var value = data;
 		var keys = [];
+		var otherIndex = index.concat();
+		var otherValue;
+		var distance;
+		var nextDistance = 0;
+		if (index.length === 0) return Object.keys(data);
+
 		for (var i = 0; i < index.length; i += 1) {
 			if (value) {
 				value = value[index[i]];
@@ -475,11 +480,6 @@ function create_settings(data, model) {
 				}
 			}
 		}
-		var otherIndex = index.concat();
-		var otherValue;
-		var distance;
-		var nextDistance = 0;
-		if (index.length === 0) return keys;
 
 		while (1) {
 			for (var i = 0; i < otherIndex.length; i += 1) {
@@ -496,8 +496,12 @@ function create_settings(data, model) {
 			for (var i = 0; i < otherIndex.length; i += 1) {
 				if (otherValue) {
 					otherValue = otherValue[otherIndex[i]];
-					if (i === otherIndex.length - 1 && otherValue) {
-						keys = concatUnique(keys, Object.keys(otherValue));
+					if (i === otherIndex.length - 1) {
+						if (otherValue) {
+							keys = concatUnique(keys, Object.keys(otherValue));
+						} else {
+							nextDistance = distance + 1;
+						}
 					}
 				} else {
 					if (i === distance + 1) {

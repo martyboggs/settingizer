@@ -491,46 +491,29 @@ var oldSizeChartData = [{"id":"d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb","title":"ba
 var empty = {"buttonPlacement":"above-add-to-cart","buttonIcon":"none","buttonText":"Doin itd5","currentPlan":"Premium Plan"};
 
 	var data = oldSizeChartData;
-	var useData = true;
 // sizeChartData asked about undefined??
-	create_settings(empty, useData ? {
-	"charts": {
-		"0": {
-			"id": {
-				"sc_show": false
+	create_settings(data, {
+    "0": {
+        "id": {},
+        "title": {},
+        "descriptionTop": {},
+        "values": {
+            "sc_type": "grid",
+            "sc_add": true
+        },
+        "descriptionBottom": {},
+        "buttonPlacement": {},
+        "conditions": {
+			"0": {
+				id: {},
+				otherstuff: {}
 			},
-			"title": {sc_readonly: true, sc_label: false, sc_placeholder: 'no title'},
-			"descriptionTop": {"sc_show": false},
-			"values": {
-				"sc_show": false
-			},
-			"descriptionBottom": {"sc_show": false},
-			"buttonPlacement": {"sc_show": false},
-			"conditionsOperator": {"sc_show": false},
-			"conditions": {
-				"0": {
-					"id": {sc_show: false},
-					"title": {sc_label: false, sc_readonly: true},
-					"type": {sc_show: false, sc_readonly: true},
-					"operator": {sc_show: false, sc_type: 'select', sc_options: ['is-equal-to', 'is-not-equal-to']},
-				},
-				"sc_add": false,
-				sc_label: false,
-				sc_order: false,
-			},
-			editSizeChart: {sc_type: 'button', sc_link: '/edit/*|id|*', sc_button_text: 'Edit Size Chart', sc_label: false}
-		},
-		"sc_add": true,
-		sc_label: 'Size Charts',
-		sc_order: true
-	},
-	"buttonPlacement": {"sc_show": false},
-	"buttonIcon": {"sc_show": false},
-	"buttonText": {"sc_show": false},
-	"currentPlan": {"sc_show": false},
-	sc_action: '/save',
-	sc_method: 'post'
-	} : undefined);
+            "sc_add": true
+        },
+        "conditionsOperator": {}
+    },
+    "sc_add": true
+});
 	console.log('equivalence test');
 	console.log(data);
 	console.log($('.settingizer form').serializeObject());
