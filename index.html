@@ -486,33 +486,51 @@ var sizeChartData = [
 		}
 	}
 ];
-var oldSizeChartData = [{"id":"d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb","title":"balls","descriptionTop":"<p>.,m.,mmm,</p>\n<p>&nbsp;</p>\n<p>,m.,m<img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb-AUSTINACTIVE_FINAL_-02copy.png?15795550668089307553\" alt=\"\" width=\"3001\" height=\"664\" /></p>","values":[["1","2","3"],["okbro","","sdfsdf"]],"descriptionBottom":"<p><img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb-appstore.png?12598548905562463663\" alt=\"\" width=\"300\" height=\"100\" /></p>","buttonPlacement":"above-atc","conditions":[/*{"type":"collection","id":445221511,"title":"Frontpage"},{"type":"collection","id":79991701552,"title":"Products"}*/]},{"id":"06ad447f-8639-47cb-b24c-7d1cebc7668b","title":"","descriptionTop":"<p><img style=\"float: right;\" src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-06ad447f-8639-47cb-b24c-7d1cebc7668b-appstore.png?8574385599155832589\" alt=\"\" width=\"300\" height=\"100\" /></p>","values":[["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""]],"descriptionBottom":"","buttonPlacement":"above-atc","conditions":[]},{"id":"e47eeaca-5501-4401-9b4f-c9a5903c6dda","title":"","descriptionTop":"<p><img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-e47eeaca-5501-4401-9b4f-c9a5903c6dda-BCP_multipleselection.png?5405499835884832029\" alt=\"\" width=\"1653\" height=\"930\" /></p>","values":[["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""]],"descriptionBottom":"","buttonPlacement":"above-atc","conditionsOperator":"any-conditions","conditions":[]}];
+var oldSizeChartData = [{"id":"d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb","title":"balls","descriptionTop":"<p>.,m.,mmm,</p>\n<p>&nbsp;</p>\n<p>,m.,m<img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb-AUSTINACTIVE_FINAL_-02copy.png?15795550668089307553\" alt=\"\" width=\"3001\" height=\"664\" /></p>","values":[["1","2","3"],["okbro","","sdfsdf"]],"descriptionBottom":"<p><img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb-appstore.png?12598548905562463663\" alt=\"\" width=\"300\" height=\"100\" /></p>","buttonPlacement":"above-atc","conditions":[/*{"type":"collection","id":445221511,"title":"Frontpage"},{"type":"collection","id":79991701552,"title":"Products"}*/]},{"id":"06ad447f-8639-47cb-b24c-7d1cebc7668b","title":"0","descriptionTop":"<p><img style=\"float: right;\" src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-06ad447f-8639-47cb-b24c-7d1cebc7668b-appstore.png?8574385599155832589\" alt=\"\" width=\"300\" height=\"100\" /></p>","values":[["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""]],"descriptionBottom":"","buttonPlacement":"above-atc","conditions":[]},{"id":"e47eeaca-5501-4401-9b4f-c9a5903c6dda","title":"0","descriptionTop":"<p><img src=\"https://cdn.shopify.com/s/files/1/0797/6895/t/20/assets/scr-e47eeaca-5501-4401-9b4f-c9a5903c6dda-BCP_multipleselection.png?5405499835884832029\" alt=\"\" width=\"1653\" height=\"930\" /></p>","values":[["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""],["","","","","","",""]],"descriptionBottom":"","buttonPlacement":"above-atc","conditionsOperator":"any-conditions","conditions":[]}];
 
 var empty = {"buttonPlacement":"above-add-to-cart","buttonIcon":"none","buttonText":"Doin itd5","currentPlan":"Premium Plan"};
 
-	var data = oldSizeChartData;
+var newSizeChartData = {"charts":[{"id":"0","title":"","descriptionTop":"","values":"","descriptionBottom":"","buttonPlacement":"","conditionsOperator":"any","conditions":[]},{"id":"1","title":"","descriptionTop":"","values":"","descriptionBottom":"","buttonPlacement":"","conditionsOperator":"any","conditions":[]},{"id":"2","title":"","descriptionTop":"","values":"","descriptionBottom":"","buttonPlacement":"","conditionsOperator":"any","conditions":[]}],"buttonPlacement":"above-add-to-cart","buttonIcon":"none","buttonText":"Doin itd5","currentPlan":"Premium Plan"};
+
+	var data = newSizeChartData;
 // sizeChartData asked about undefined??
 	create_settings(data, {
-    "0": {
-        "id": {},
-        "title": {},
-        "descriptionTop": {},
-        "values": {
-            "sc_type": "grid",
-            "sc_add": true
-        },
-        "descriptionBottom": {},
-        "buttonPlacement": {},
-        "conditions": {
-			"0": {
-				id: {},
-				otherstuff: {}
+		"charts": {
+		"0": {
+			"id": {
+				"sc_show": false
 			},
-            "sc_add": true
-        },
-        "conditionsOperator": {}
-    },
-    "sc_add": true
+			"title": {sc_readonly: true, sc_label: false, sc_placeholder: 'no title'},
+			"descriptionTop": {"sc_show": false},
+			"values": {
+				"sc_show": false
+			},
+			"descriptionBottom": {"sc_show": false},
+			"buttonPlacement": {"sc_show": false},
+			"conditionsOperator": {"sc_show": false},
+			"conditions": {
+				"0": {
+					"id": {sc_show: false},
+					"title": {sc_label: false, sc_readonly: true},
+					"type": {sc_show: false, sc_readonly: true},
+					"operator": {sc_show: false, sc_type: 'select', sc_options: ['is-equal-to', 'is-not-equal-to']},
+				},
+				"sc_add": false,
+				sc_label: false,
+				sc_order: false,
+			},
+			editSizeChart: {sc_type: 'button', sc_link: '/edit/*|id|*', sc_button_text: 'Edit Size Chart', sc_label: false}
+		},
+		"sc_add": true,
+		sc_label: 'Size Charts',
+		sc_order: true
+	},
+	"buttonPlacement": {"sc_show": false},
+	"buttonIcon": {"sc_show": false},
+	"buttonText": {"sc_show": false},
+	"currentPlan": {"sc_show": false},
+	sc_action: '/save',
+	sc_method: 'post',
 });
 	console.log('equivalence test');
 	console.log(data);

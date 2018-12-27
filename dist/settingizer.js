@@ -36,7 +36,7 @@ function create_settings(data, model) {
 
 	var traverses = 0;
 
-	// parent only used for checking type
+	// parent only used for checking type (except for *||* sc_link substituter)
 
 	var el;
 	el = document.getElementsByClassName('settingizer')[0];
@@ -84,7 +84,7 @@ function create_settings(data, model) {
 					modelValue = modelValue[isNaN(index[i]) ? index[i] : 0];
 					if (i === index.length - 1 && modelValue) {
 						if (isNaN(index[i])) {
-							parent = {};
+							parent = parent || {};
 						} else {
 							empty = true;
 							parent = [];
