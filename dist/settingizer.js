@@ -27,7 +27,7 @@ function create_settings(data, model) {
 	var modelActive = {};
 	var ids = ['array', 'object', 'grid', 'grid-row', 'sc-btn'];
 	var descriptions = {};
-	var gridCheck = 0;
+	var gridRows = -1;
 	var index_path;
 	var empty = false;
 	var sc_keys;
@@ -36,7 +36,9 @@ function create_settings(data, model) {
 
 	var traverses = 0;
 
-	// parent only used for checking type (except for *||* sc_link substituter)
+	// parent only used for checking type
+	//(except for *||* sc_link substituter)
+	//and length is checked when finding the end of array
 
 	var el;
 	el = document.getElementsByClassName('settingizer')[0];
@@ -123,6 +125,14 @@ function create_settings(data, model) {
 			getScKeys();
 		}
 
+		// console.log(traverses);
+		if (gridRows === -1 && prop !== undefined && value === '' && modelActive.sc_type && modelActive.sc_type === 'grid') {
+			value = [['']];
+		}
+		if (value === undefined && gridRows === 1) {
+			gridRows = 0;
+		}
+
 		// console.log('index:', index, 'sc_keys:', sc_keys, 'parent:', parent, 'value:', value);
 
 		if (Array.isArray(value)) {
@@ -140,9 +150,9 @@ function create_settings(data, model) {
 			var min = modelActive.sc_min ? ' data-min="' + modelActive.sc_min + '"' : '';
 
 			// if array has as many arrays of the same length
-			if (gridCheck === 0) {
+			if (gridRows === -1) {
 				if (modelActive.sc_type && modelActive.sc_type === 'grid') {
-					gridCheck = value.length;
+					gridRows = value.length;
 					html('<div class="grid array-group' + sc_hide + ' ' + prop + '-group"' + name + min + '>');
 				} else {
 					html('<div class="array-group' + sc_hide + ' ' + prop + '-group"' + name + min + '>');
@@ -177,25 +187,25 @@ function create_settings(data, model) {
 		} else if (typeof value === 'function') {
 
 		} else if (prop === undefined || (!isNaN(prop) && prop >= parent.length)) { // reached end of object/array
-			// console.log('end of sc_keys');
-
-			empty = false;
-
-			if (Array.isArray(parent) && modelActive.sc_add && gridCheck === 0) {
-				html('<div class="array-button"><button class="add-item sc-btn" type="button">Add item</button></div>');
-			}
-			html('</div>');
-
-			if (gridCheck === 1) {
-				html('<div class="grid-buttons"><div><label>X</label><button class="delete-x sc-btn" type="button">-</button><button class="add-x sc-btn" type="button">+</button></div><div><label>Y</label><button class="delete-y sc-btn" type="button">-</button><button class="add-y sc-btn" type="button">+</button></div></div>');
-				html('</div>');
-				index.pop();
-			}
-			if (gridCheck > 0) gridCheck--;
-
+			// console.log('end of array or object');
 			if (index.length === 1) {
 				done();
 				return; // kill it
+			}
+
+			empty = false;
+
+			if (Array.isArray(parent) && modelActive.sc_add && gridRows === -1) {
+				html('<div class="array-button"><button class="add-item sc-btn" type="button">Add item</button></div>');
+			}
+			html('</div>'); // closes array-group or grid-row
+
+			if (gridRows === 0) {
+				if (modelActive.sc_add) {
+					html('<div class="grid-buttons"><div><label>X</label><button class="delete-x sc-btn" type="button">-</button><button class="add-x sc-btn" type="button">+</button></div><div><label>Y</label><button class="delete-y sc-btn" type="button">-</button><button class="add-y sc-btn" type="button">+</button></div></div>');
+				}
+				html('</div>'); // closes grid
+				index.pop();
 			}
 
 			// up a level
@@ -210,7 +220,13 @@ function create_settings(data, model) {
 				parent = {};
 			} else {
 				parent = [];
-				sc_keys = [];
+				if (gridRows !== 0) sc_keys = [];
+			}
+
+			if (gridRows === 2) {
+				gridRows -= 2;
+			} else if (gridRows >= 0) {
+				gridRows -= 1;
 			}
 
 			// reset descriptions
@@ -260,7 +276,7 @@ function create_settings(data, model) {
 
 			html('<div class="fieldset' + sc_hide + ' ' + className + '">');
 				// label
-				if (gridCheck === 0 && modelActive.sc_label !== false) html('<label for="' + id + '">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
+				if (gridRows === -1 && modelActive.sc_label !== false) html('<label for="' + id + '">' + (modelActive.sc_label ? modelActive.sc_label : capitalize(prop)) + '</label>');
 				// option
 				html(open_link);
 					var option = '';

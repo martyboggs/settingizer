@@ -490,40 +490,41 @@ var oldSizeChartData = [{"id":"d8dfd1ca-1e21-46c6-88a5-72680e1bfcbb","title":"ba
 
 var empty = {"buttonPlacement":"above-add-to-cart","buttonIcon":"none","buttonText":"Doin itd5","currentPlan":"Premium Plan"};
 
-var newSizeChartData = {"charts":[{"id":"0","title":"","descriptionTop":"","values":"","descriptionBottom":"","buttonPlacement":"","conditionsOperator":"any","conditions":[]},{"id":"1","title":"","descriptionTop":"","values":"","descriptionBottom":"","buttonPlacement":"","conditionsOperator":"any","conditions":[]},{"id":"2","title":"","descriptionTop":"","values":"","descriptionBottom":"","buttonPlacement":"","conditionsOperator":"any","conditions":[]}],"buttonPlacement":"above-add-to-cart","buttonIcon":"none","buttonText":"Doin itd5","currentPlan":"Premium Plan"};
+var newSizeChartData = {"charts":[{"id":"0","title":"","descriptionTop":"",values:"","descriptionBottom":"","buttonPlacement":"","conditionsOperator":"any","conditions":[]},{"id":"1","title":"","descriptionTop":"","values":"","descriptionBottom":"","buttonPlacement":"","conditionsOperator":"any","conditions":[]},{"id":"2","title":"","descriptionTop":"","values":"","descriptionBottom":"","buttonPlacement":"","conditionsOperator":"any","conditions":[]}],"buttonPlacement":"above-add-to-cart","buttonIcon":"none","buttonText":"Doin itd5","currentPlan":"Premium Plan"};
 
 	var data = newSizeChartData;
 // sizeChartData asked about undefined??
 	create_settings(data, {
 		"charts": {
+		sc_label: false,
 		"0": {
 			"id": {
 				"sc_show": false
 			},
-			"title": {sc_readonly: true, sc_label: false, sc_placeholder: 'no title'},
-			"descriptionTop": {"sc_show": false},
+			"title": {},
+			"descriptionTop": {sc_type: 'textarea'},
 			"values": {
-				"sc_show": false
+				sc_label: 'Size Chart',
+				"sc_type": 'grid',
+				"sc_add": true,
 			},
-			"descriptionBottom": {"sc_show": false},
-			"buttonPlacement": {"sc_show": false},
-			"conditionsOperator": {"sc_show": false},
+			"descriptionBottom": {sc_type: 'textarea'},
+			"conditionsOperator": {sc_label: 'Associated Products', sc_type: 'radios', sc_options: ['all-products', 'products-matching-any-condition-below']},
+			"addProducts": {sc_type: 'button', sc_label: 'Conditions'},
+			"addCollections": {sc_type: 'button', sc_label: false},
 			"conditions": {
 				"0": {
 					"id": {sc_show: false},
-					"title": {sc_label: false, sc_readonly: true},
-					"type": {sc_show: false, sc_readonly: true},
+					"type": {sc_readonly: true/*, sc_type: 'select', sc_options: ['collection', 'product', 'product_type', 'tag', 'vendor', 'all']*/},
 					"operator": {sc_show: false, sc_type: 'select', sc_options: ['is-equal-to', 'is-not-equal-to']},
+					"title": {sc_readonly: true}
 				},
-				"sc_add": false,
-				sc_label: false,
-				sc_order: false,
+				"sc_add": true,
+				sc_description: 'here\'s whate you do',
+				sc_order: false
 			},
-			editSizeChart: {sc_type: 'button', sc_link: '/edit/*|id|*', sc_button_text: 'Edit Size Chart', sc_label: false}
-		},
-		"sc_add": true,
-		sc_label: 'Size Charts',
-		sc_order: true
+			"buttonPlacement": {sc_type: 'select', sc_options: ['use-global', 'above-add-to-cart', 'below-add-to-cart']},
+		}
 	},
 	"buttonPlacement": {"sc_show": false},
 	"buttonIcon": {"sc_show": false},
