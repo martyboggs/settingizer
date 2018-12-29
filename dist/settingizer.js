@@ -35,6 +35,8 @@ function create_settings(data, model) {
 	var sc_keys;
 	var data_keys = [];
 	var model_keys = [];
+	var height;
+	var animationPadding;
 
 	var traverses = 0;
 
@@ -636,29 +638,40 @@ function create_settings(data, model) {
 				var lastItem = items[items.length - 1];
 				if (items.length === 1 && lastItem.style.display === 'none') {
 					lastItem.style.display = '';
+					initShowAnimation(lastItem);
+					showAnimation(lastItem);
+					clearValues(lastItem);
 					disableNameEls(lastItem, false);
 				} else {
 					var item = lastItem.cloneNode(true);
-					fixAtts(item, par[0].dataset.name);
-					clearValues(item);
 					par[0].insertBefore(item, lastItem.nextSibling);
+					initShowAnimation(item);
+					showAnimation(item);
+					clearValues(item);
+					fixAtts(item, par[0].dataset.name);
 				}
 			} else if (e.target.matches('.add-x')) {
 				var par = getClosest('.array-group', e.target);
 				var items = par[0].querySelectorAll('.grid-row');
-				var lastItem = items[0].childNodes[items[0].childNodes.length - 1];
-				var item;
-				if (items[0].childNodes.length === 1 && lastItem.style.display === 'none') {
+				var firstLastItem = items[0].childNodes[items[0].childNodes.length - 1];
+				var item, lastItem;
+				if (items[0].childNodes.length === 1 && firstLastItem.style.display === 'none') {
 					for (var i = 0; i < items.length; i += 1) {
-						items[i].childNodes[items[i].childNodes.length - 1].style.display = '';
-						clearValues(items[i].childNodes[items[i].childNodes.length - 1]);
+						lastItem = items[i].childNodes[items[i].childNodes.length - 1];
+						lastItem.style.display = '';
+						initShowAnimation(lastItem);
+						showAnimation(lastItem);
+						clearValues(lastItem);
+						disableNameEls(lastItem, false);
 					}
 				} else {
 					for (var i = 0; i < items.length; i += 1) {
 						item = items[i].childNodes[items[i].childNodes.length - 1].cloneNode(true);
 						items[i].appendChild(item);
-						fixAtts(item, par[0].dataset.name);
+						initShowAnimation(item);
+						showAnimation(item);
 						clearValues(item);
+						fixAtts(item, par[0].dataset.name);
 					}
 				}
 			} else if (e.target.matches('.delete-item') || e.target.matches('.delete-y')) {
@@ -668,31 +681,37 @@ function create_settings(data, model) {
 				var lastItem = e.target.matches('.delete-y') ? items[items.length - 1] : par[1];
 				if (!par[0].dataset.min || items.length > Number(par[0].dataset.min)) {
 					if (items.length > 1) {
-						par[0].removeChild(lastItem);
-						if (e.target.matches('.delete-item')) {
-							items = par[0].childNodes; // refresh
-							items = [].slice.call(items, 0, -1); // remove last item (buttons)
-							fixAtts(items, par[0].dataset.name);
-						}
+						initHideAnimation(lastItem);
+						hideAnimation(lastItem);
+						setTimeout(function () {
+							par[0].removeChild(lastItem);
+							if (e.target.matches('.delete-item')) {
+								items = par[0].childNodes; // refresh
+								items = [].slice.call(items, 0, -1); // remove last item (buttons)
+								// fixAtts(items, par[0].dataset.name);
+							}
+						}, 500);
 					} else {
-						lastItem.style.display = 'none';
-						disableNameEls(lastItem, true);
+						if (e.target.matches('.delete-y')) return; // can't delete last row
+						initHideAnimation(lastItem);
+						hideAnimation(lastItem);
+						setTimeout(function () {
+							lastItem.style.display = 'none';
+							disableNameEls(lastItem, true);
+						}, 500);
 					}
 				}
 			} else if (e.target.matches('.delete-x')) {
 				var par = getClosest('.array-group', e.target);
 				var items = par[0].querySelectorAll('.grid-row');
-				var lastItem = items[0].childNodes[items[0].childNodes.length - 1];
-				var item;
+				var lastItem;
 				if (items[0].childNodes.length > 1) {
 					for (var i = 0; i < items.length; i += 1) {
-						item = items[i].childNodes[items[i].childNodes.length - 1];
-						items[i].removeChild(item);
+						lastItem = items[i].childNodes[items[i].childNodes.length - 1];
+						items[i].removeChild(lastItem);
 					}
 				} else {
-					for (var i = 0; i < items.length; i += 1) {
-						items[i].childNodes[items[i].childNodes.length - 1].style.display = 'none';
-					}
+					// can't delete last column
 				}
 			} else if (e.target.matches('.move-up') || e.target.matches('.move-down')) {
 				var par = getClosest('.array-group', e.target);
@@ -715,6 +734,43 @@ function create_settings(data, model) {
 				}
 			}
 		});
+
+		function initShowAnimation(item) {
+			item.style.height = '';
+			height = item.getBoundingClientRect().height;
+			animationPadding = item.style.padding;
+			item.style.height = '0';
+			item.style.padding = '0';
+			item.style.transition = '';
+			item.style.overflow = 'hidden';
+			// item.style.opacity = '0';
+			// item.style.transform = 'rotateX(-90deg)';
+		}
+
+		function showAnimation(item) {
+			setTimeout(function () {
+				item.style.transition = 'all 0.3s ease-in-out';
+				item.style.height = height + 'px';
+				item.style.padding = animationPadding;
+				// item.style.opacity = '1';
+				// item.style.transform = 'none';
+			});
+		}
+
+		function initHideAnimation(item) {
+			item.style.transition = '';
+		}
+
+		function hideAnimation(item) {
+			setTimeout(function () {
+				item.style.transition = 'all 0.3s ease-in-out';
+				item.style.height = 0;
+				item.style.minHeight = 0;
+				// item.style.opacity = '0';
+				// item.style.transform = 'rotateX(-90deg)';
+			});
+		}
+
 		el.addEventListener('mousedown', function (e) {
 			// // check if clicking the rearrange icon
 			return; // remove this

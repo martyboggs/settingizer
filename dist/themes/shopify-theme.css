@@ -44,9 +44,6 @@
 .settingizer.shopify-theme > form > .array-group > .object-group {
 	background: white;
 }
-.settingizer.shopify-theme .grid-row {
-	min-height: 58px;
-}
 .settingizer.shopify-theme .array-button,
 .settingizer.shopify-theme .grid-buttons {
 	background: transparent;

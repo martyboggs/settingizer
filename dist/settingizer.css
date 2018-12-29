@@ -184,7 +184,6 @@
 .grid-row {
 	display: flex;
 	padding: 5px;
-	min-height: 50px;
 }
 .grid-buttons {
 	border: 0;
