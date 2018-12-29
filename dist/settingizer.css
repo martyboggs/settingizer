@@ -38,6 +38,10 @@
 	opacity: 0.5;
 }
 
+.sc-spacer {
+	height: 20px;
+}
+
 .settingizer input[type="text"],
 .settingizer input[type="number"],
 .settingizer input[type="email"],
@@ -229,6 +233,28 @@
 .fieldset .radioset label {
 	order: 1;
 }
-.sc-spacer {
-	height: 20px;
+
+.fieldset.type-image-swatches > div {
+	display: flex;
+	flex-wrap: wrap;
+}
+.fieldset.type-image-swatches > div > div {
+	margin: 5px;
+}
+.fieldset.type-image-swatches input {
+	position: absolute;
+	left: -9999px;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+.fieldset.type-image-swatches div label {
+	width: 40px;
+	height: 40px;
+	min-width: 0;
+	cursor: pointer;
+	background: white;
+}
+.fieldset.type-image-swatches input:checked + label {
+	box-shadow: 0 0 0 1px black;
 }
