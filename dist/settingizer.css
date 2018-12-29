@@ -66,6 +66,7 @@
 	background: #f4f6f8;
 	color: #919eab;
 	border: 1px solid #c4cdd5;
+	outline: none;
 }
 
 .settingizer .description {
