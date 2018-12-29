@@ -1,6 +1,6 @@
 {
   "name": "settingizer",
-  "version": "1.9.4",
+  "version": "1.10.0",
   "description": "Create settings pages from JavaScript objects",
   "main": "dist/settingizer.js",
   "scripts": {

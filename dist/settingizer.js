@@ -179,7 +179,7 @@ function create_settings(data, model) {
 			html('<div class="object-group' + sc_hide + (' ' + prop) + '-group"' + hide + '>');
 			if (Array.isArray(parent) && (modelActive.sc_add || modelActive.sc_order)) {
 				var orderButtons = modelActive.sc_order ? '<button type="button" class="move-up">-</button><button type="button" class="move-down">+</button>' : '';
-				var deleteButton = modelActive.sc_add ? '<button type="button" class="delete-item">x</button>' : '';
+				var deleteButton = modelActive.sc_delete ? '<button type="button" class="delete-item">x</button>' : '';
 				html('<div class="sc-header"><div class="order-buttons">' + orderButtons + '</div>' + deleteButton + '</div><div class="sc-spacer"></div>');
 			}
 
@@ -275,7 +275,7 @@ function create_settings(data, model) {
 			var url = modelActive.sc_link ? modelActive.sc_link.replace(/\*\|(\w+)\|\*/g, function (sub, match) { return parent[match] ? parent[match] : ''; }) : '';
 			var open_link = modelActive.sc_link && type !== 'button' ? '<a href="' + url + '">' : '';
 			var close_link = modelActive.sc_link && type !== 'button' ? '</a>' : '';
-			var disabled = empty && !modelActive.sc_min ? ' disabled' : '';
+			var disabled = modelActive.sc_disabled || (empty && !modelActive.sc_min) ? ' disabled' : '';
 			var isLastProp = isObject(parent) && sc_keys.indexOf(prop) === sc_keys.length - 1;
 
 			html('<div class="fieldset' + sc_hide + ' ' + className + '">');
@@ -566,7 +566,7 @@ function create_settings(data, model) {
 			for (prop in option) {
 				if (prop.match(/^sc_/)) {
 					// for some props, just look at the current level
-					if (['sc_label', 'sc_description', 'sc_action', 'sc_method'].indexOf(prop) === -1 || i === index.length) {
+					if (['sc_label', 'sc_description', 'sc_action', 'sc_method', 'sc_disabled'].indexOf(prop) === -1 || i === index.length) {
 						modelActive[prop] = option[prop];
 					}
 				}
