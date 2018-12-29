@@ -1,6 +1,8 @@
+var settingizer = {};
+
 function create_settings(data, model) {
-	console.log('data', data);
-	console.log('config', model);
+	settingizer.data = data;
+	settingizer.config = model;
 	if (typeof data === 'string') {
 		// todo: parse json
 		return console.log('don\'t pass string');
@@ -299,7 +301,7 @@ function create_settings(data, model) {
 						html(option);
 					} else if (type === 'image-swatches') {
 						option += '<div>';
-						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div><input type="radio" id="' + id + '"' + key + name + required + disabled + ' value="' + v.key + '"' + (val === v.key ? ' checked' : '') + '><label for="' + id + '" style="background: url(' + v.value + ') no-repeat 50% 50% / 80% 80%"></label></div>'; }, '');
+						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div><input type="radio" id="' + id + '"' + key + name + required + disabled + ' value="' + v.key + '"' + (val === v.key ? ' checked' : '') + '><label for="' + id + '" style="background-image: url(' + v.value + ')"></label></div>'; }, '');
 						option += description + '</div>';
 						html(option);
 					} else if (type === 'button') {

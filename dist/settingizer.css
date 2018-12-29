@@ -239,7 +239,7 @@
 	flex-wrap: wrap;
 }
 .fieldset.type-image-swatches > div > div {
-	margin: 5px;
+	margin: 0 8px 8px 0;
 }
 .fieldset.type-image-swatches input {
 	position: absolute;
@@ -249,12 +249,17 @@
 	height: 0;
 }
 .fieldset.type-image-swatches div label {
-	width: 40px;
-	height: 40px;
+	width: 60px;
+	height: 60px;
 	min-width: 0;
 	cursor: pointer;
-	background: white;
+	background: white no-repeat 50% 50% / 90% auto;
+	box-shadow: 0 0 0 1px #a0a0a0;
+	border-radius: 3px;
+}
+.fieldset.type-image-swatches div label:hover {
+	box-shadow: 0 0 0 1px black;
 }
 .fieldset.type-image-swatches input:checked + label {
-	box-shadow: 0 0 0 1px black;
+	box-shadow: 0 0 0 2px black;
 }
