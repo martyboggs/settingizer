@@ -294,17 +294,17 @@ function create_settings(data, model) {
 					} else if (type === 'radios') {
 						option += '<div>';
 						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="radioset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '"' + key + name + required + disabled + ' value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
-						option += description + '</div>';
+						option += '</div>' + description;
 						html(option);
 					} else if (type === 'buttons') {
 						option += '<div>';
 						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div class="buttonset"><label for="' + id + '">' + capitalize(v) + '</label><input type="radio" id="' + id + '"' + key + name + required + disabled + ' value="' + v + '"' + (val === v ? ' checked' : '') + '></div>'; }, '');
-						option += description + '</div>';
+						option += '</div>' + description;
 						html(option);
 					} else if (type === 'image-swatches') {
 						option += '<div class="swatches">';
 						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div><input type="radio" id="' + id + '"' + key + name + required + disabled + ' value="' + v.key + '"' + (val === v.key ? ' checked' : '') + '><label for="' + id + '" style="background-image: url(' + v.value + ')"></label></div>'; }, '');
-						option += description + '</div>';
+						option += '</div>' + description;
 						html(option);
 					} else if (type === 'button') {
 						var button_text = modelActive.sc_button_text;
