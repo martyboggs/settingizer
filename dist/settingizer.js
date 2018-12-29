@@ -690,7 +690,7 @@ function create_settings(data, model) {
 								items = [].slice.call(items, 0, -1); // remove last item (buttons)
 								// fixAtts(items, par[0].dataset.name);
 							}
-						}, 500);
+						}, 400);
 					} else {
 						if (e.target.matches('.delete-y')) return; // can't delete last row
 						initHideAnimation(lastItem);
@@ -698,7 +698,7 @@ function create_settings(data, model) {
 						setTimeout(function () {
 							lastItem.style.display = 'none';
 							disableNameEls(lastItem, true);
-						}, 500);
+						}, 400);
 					}
 				}
 			} else if (e.target.matches('.delete-x')) {
@@ -736,24 +736,17 @@ function create_settings(data, model) {
 		});
 
 		function initShowAnimation(item) {
-			item.style.height = '';
-			height = item.getBoundingClientRect().height;
-			animationPadding = item.style.padding;
-			item.style.height = '0';
-			item.style.padding = '0';
 			item.style.transition = '';
 			item.style.overflow = 'hidden';
+			item.style.transform = 'rotateX(-90deg)';
 			// item.style.opacity = '0';
-			// item.style.transform = 'rotateX(-90deg)';
 		}
 
 		function showAnimation(item) {
 			setTimeout(function () {
 				item.style.transition = 'all 0.3s ease-in-out';
-				item.style.height = height + 'px';
-				item.style.padding = animationPadding;
+				item.style.transform = 'none';
 				// item.style.opacity = '1';
-				// item.style.transform = 'none';
 			});
 		}
 
@@ -764,10 +757,8 @@ function create_settings(data, model) {
 		function hideAnimation(item) {
 			setTimeout(function () {
 				item.style.transition = 'all 0.3s ease-in-out';
-				item.style.height = 0;
-				item.style.minHeight = 0;
+				item.style.transform = 'rotateX(-90deg)';
 				// item.style.opacity = '0';
-				// item.style.transform = 'rotateX(-90deg)';
 			});
 		}
 
