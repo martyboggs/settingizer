@@ -302,7 +302,7 @@ function create_settings(data, model) {
 						option += description + '</div>';
 						html(option);
 					} else if (type === 'image-swatches') {
-						option += '<div>';
+						option += '<div class="swatches">';
 						option += modelActive.sc_options.reduce(function (a, v) { id = getId(prop); return a + '<div><input type="radio" id="' + id + '"' + key + name + required + disabled + ' value="' + v.key + '"' + (val === v.key ? ' checked' : '') + '><label for="' + id + '" style="background-image: url(' + v.value + ')"></label></div>'; }, '');
 						option += description + '</div>';
 						html(option);

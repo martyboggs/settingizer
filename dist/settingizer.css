@@ -237,8 +237,12 @@
 	display: flex;
 	flex-wrap: wrap;
 }
+.fieldset.type-image-swatches .swatches {
+	/* would be 4px to offset swatch margin, but box-shadow needs 2px too */
+	margin: -2px;
+}
 .fieldset.type-image-swatches > div > div {
-	margin: 0 8px 8px 0;
+	margin: 4px;
 }
 .fieldset.type-image-swatches input {
 	position: absolute;
@@ -247,7 +251,7 @@
 	width: 0;
 	height: 0;
 }
-.fieldset.type-image-swatches div label {
+.settingizer .fieldset.type-image-swatches div label {
 	width: 60px;
 	height: 60px;
 	min-width: 0;
@@ -255,6 +259,7 @@
 	background: white no-repeat 50% 50% / 90% auto;
 	box-shadow: 0 0 0 1px #a0a0a0;
 	border-radius: 3px;
+	margin: 0;
 }
 .fieldset.type-image-swatches div label:hover {
 	box-shadow: 0 0 0 1px black;
