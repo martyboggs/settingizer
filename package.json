@@ -1,6 +1,6 @@
 {
   "name": "settingizer",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "description": "Create settings pages from JavaScript objects",
   "main": "dist/settingizer.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "front-end"
   ],
   "author": "Marty Rutherford Boggs Jr. <whack47@gmail.com>",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/martyboggs/settingizer/issues"
   },
