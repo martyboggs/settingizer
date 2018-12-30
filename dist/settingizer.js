@@ -206,7 +206,7 @@ function create_settings(data, model) {
 
 			if (gridRows === 0) {
 				if (modelActive.sc_add) {
-					html('<div class="grid-buttons"><div><label>X</label><button class="delete-x sc-btn" type="button">-</button><button class="add-x sc-btn" type="button">+</button></div><div><label>Y</label><button class="delete-y sc-btn" type="button">-</button><button class="add-y sc-btn" type="button">+</button></div></div>');
+					html('<div class="grid-buttons"><div><label>Columns</label><button class="delete-x sc-btn" type="button">-</button><button class="add-x sc-btn" type="button">+</button></div><div><label>Rows</label><button class="delete-y sc-btn" type="button">-</button><button class="add-y sc-btn" type="button">+</button></div></div>');
 				}
 				html('</div>'); // closes grid
 				index.pop();

@@ -51,6 +51,7 @@
 }
 .settingizer.shopify-theme .grid-buttons label {
 	padding: 10px 20px 10px 0;
+	min-width: 74px;
 }
 .settingizer.shopify-theme .grid-buttons .delete-x,
 .settingizer.shopify-theme .grid-buttons .delete-y {
