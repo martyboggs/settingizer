@@ -285,11 +285,11 @@ function create_settings(data, model) {
 				html(open_link);
 					var option = '';
 					if (type === 'textarea') {
-						html('<div><textarea rows="5"' + idAtt + key + name + placeholder + readonly + required + disabled + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea>' + description + '</div>');
+						html('<div><textarea' + idAtt + key + name + placeholder + readonly + required + disabled + (value === 'on' ? ' checked' : '') + '>' + val + '</textarea>' + description + '</div>');
 					} else if (type === 'select') {
-						option += '<div><select' + idAtt + key + name + required + disabled +'>';
+						option += '<div><div class="select-wrapper"><select' + idAtt + key + name + required + disabled + '>';
 						option += modelActive.sc_options.reduce(function (a, v) { return a + '<option value="' + v + '"' + (val === v ? ' selected' : '') + '>' + capitalize(v) + '</option>'; }, '');
-						option += '</select>' + description + '</div>';
+						option += '</select><svg style="display: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 16l-4-4h8l-4 4zm0-12L6 8h8l-4-4z"></path></svg></div>' + description + '</div>';
 						html(option);
 					} else if (type === 'radios') {
 						option += '<div>';
@@ -355,7 +355,7 @@ function create_settings(data, model) {
 	}
 
 	function done() {
-		if (!buildModel) form.innerHTML = htmlStr + '<div class="sc-submit"><button type="submit" class="sc-btn-primary">Save</button></div>';
+		if (!buildModel) form.innerHTML = htmlStr + '<div class="sc-submit"><button type="submit" class="sc-btn-primary">' + (modelActive.sc_submit_text ? modelActive.sc_submit_text : 'Save') + '</button></div>';
 	}
 
 	function build_settings() {
@@ -566,7 +566,7 @@ function create_settings(data, model) {
 			for (prop in option) {
 				if (prop.match(/^sc_/)) {
 					// for some props, just look at the current level
-					if (['sc_label', 'sc_description', 'sc_action', 'sc_method', 'sc_disabled'].indexOf(prop) === -1 || i === index.length) {
+					if (['sc_label', 'sc_description', 'sc_action', 'sc_method', 'sc_disabled', 'sc_submit_text'].indexOf(prop) === -1 || i === index.length) {
 						modelActive[prop] = option[prop];
 					}
 				}
